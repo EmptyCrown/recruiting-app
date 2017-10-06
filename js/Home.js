@@ -31,6 +31,7 @@ class Home extends React.Component {
     super(props);
     this.state = {
       companies: [],
+      userCompanies: {},
       searchQuery: '',
       dialogOpen: false,
       drawerOpen: false,
@@ -110,7 +111,13 @@ class Home extends React.Component {
     return (
       <div className="rowB centering" key={index}>
         {sublist.map((c, i) => 
-          {return <CompanyCard key={index+c.name+i} name={c.name} companyid={c.companyid} squareLogo={c.squareLogo} oc={c.oc}/>}
+          {return <CompanyCard 
+                    key={index+c.name+i} 
+                    name={c.name} 
+                    companyid={c.companyid} 
+                    squareLogo={c.squareLogo} 
+                    oc={c.oc} 
+                    bookmarked={c.companyid in this.state.userCompanies && this.state.userCompanies[c.companyid].bookmarked}/>}
         )}
       </div>
     );

@@ -59,6 +59,7 @@ class OfferTable extends React.Component {
             }
           ]}
           defaultPageSize={10}
+          showPageSizeOptions={false}
           className="-striped -highlight"
         />
         <br />

@@ -54080,7 +54080,13 @@ var Home = function (_React$Component) {
         'div',
         { className: 'rowB centering', key: index },
         sublist.map(function (c, i) {
-          return _react2.default.createElement(_CompanyCard2.default, { key: index + c.name + i, name: c.name, companyid: c.companyid, squareLogo: c.squareLogo, oc: c.oc });
+          return _react2.default.createElement(_CompanyCard2.default, {
+            key: index + c.name + i,
+            name: c.name,
+            companyid: c.companyid,
+            squareLogo: c.squareLogo,
+            oc: c.oc,
+            bookmarked: c.companyid in _this.state.userCompanies && _this.state.userCompanies[c.companyid].bookmarked });
         })
       );
       // var c = list[index];
@@ -54089,6 +54095,7 @@ var Home = function (_React$Component) {
 
     _this.state = {
       companies: [],
+      userCompanies: {},
       searchQuery: '',
       dialogOpen: false,
       drawerOpen: false,
@@ -81939,6 +81946,12 @@ var styles = {
     fontSize: 16,
     fontFamily: 'Ubuntu',
     textAlign: 'center'
+  },
+  bookmark: {
+    color: _colors.amberA700,
+    position: 'absolute',
+    top: 16,
+    left: 37
   }
 };
 
@@ -81976,6 +81989,11 @@ var CompanyCard = function (_React$Component) {
           'div',
           { className: 'centering', style: styles.name },
           this.props.name
+        ),
+        this.props.bookmarked && _react2.default.createElement(
+          _materialUi.FontIcon,
+          { className: 'material-icons', style: styles.bookmark },
+          'bookmark'
         )
       );
     }
@@ -93064,6 +93082,7 @@ var OfferTable = function (_React$Component) {
             desc: true
           }],
           defaultPageSize: 10,
+          showPageSizeOptions: false,
           className: '-striped -highlight'
         }),
         _react2.default.createElement('br', null)

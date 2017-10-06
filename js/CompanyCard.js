@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-  Paper, CircularProgress, Card, FlatButton, CardHeader
+  Paper, CircularProgress, Card, FlatButton, CardHeader, FontIcon
 } from 'material-ui';
 import { green700, white, amber600, grey200, red400, red500, red600, blue200, blue400, blue500, deepOrange500, amber400,
-          grey500, grey700, darkBlack, green500, yellow500, green400, green600, greenA700, grey400,
+          grey500, grey700, darkBlack, green500, yellow500, green400, green600, greenA700, grey400, amberA700,
           green200, red200, amber200, orange200, orange400, green50} from 'material-ui/styles/colors';
 
 import SearchBar from 'material-ui-search-bar';
@@ -21,6 +21,12 @@ const styles = {
     fontSize: 16,
     fontFamily: 'Ubuntu',
     textAlign: 'center'
+  },
+  bookmark: {
+    color: amberA700,
+    position: 'absolute',
+    top: 16,
+    left: 37
   }
 }
 
@@ -47,6 +53,9 @@ class CompanyCard extends React.Component {
         <div className="centering" style={styles.name}>
           {this.props.name}
         </div>
+        {this.props.bookmarked &&
+          <FontIcon className="material-icons" style={styles.bookmark}>bookmark</FontIcon>
+        }
       </Card>
     );
   }
