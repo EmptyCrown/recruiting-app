@@ -84,13 +84,24 @@ class Home extends React.Component {
     for(var i=0; i<this.state.companies.length; i++) {
       var company = Object.assign({},this.state.companies[i], {oc: this.oc});
       if((!this.state.searchQuery || company.name.toLowerCase().includes(this.state.searchQuery.toLowerCase())) 
-          && (!this.state.ownFilter || (!this.state.userCompanies || company.companyid in this.state.userCompanies))
+          && (!this.state.ownFilter || (!this.state.userCompanies || (company.companyid in this.state.userCompanies && this.state.userCompanies[company.companyid].bookmarked)))
           && (this.state.sectorFilter !== 'tech' || company.sectorName == 'Information Technology')
           && (this.state.sectorFilter !== 'finance' || company.sectorName == 'Finance')
           && (this.state.sectorFilter !== 'consulting' || company.sectorName == 'Business Services')) {
         filteredList.push(company);
       }
     }
+
+    filteredList.sort((a,b) => {
+      let al = a.xp ? a.xp.length : 0;
+      let bl = b.xp ? b.xp.length : 0;
+      if(al == bl) {
+        return (b.numberOfRatings || 0) - (a.numberOfRatings || 0);
+      } else {
+        return bl - al;
+      }
+    });
+
     return filteredList;
   };
 
@@ -98,8 +109,8 @@ class Home extends React.Component {
     var sublist = list.slice(5*index, 5*index+5);
     return (
       <div className="rowB centering" key={index}>
-        {sublist.map((c, index) => 
-          {return <CompanyCard key={c.name} name={c.name} companyid={c.companyid} squareLogo={c.squareLogo} oc={c.oc}/>}
+        {sublist.map((c, i) => 
+          {return <CompanyCard key={index+c.name+i} name={c.name} companyid={c.companyid} squareLogo={c.squareLogo} oc={c.oc}/>}
         )}
       </div>
     );
@@ -109,7 +120,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     var db = firebase.firestore();
-    // $.getJSON("/companies.json", function(json) {
+    // $.getJSON("/companies3.json", function(json) {
     //   var companies = json.companies;
     //   for(var i = 0; i<companies.length; i++) {
     //     var doc = companies[i];
@@ -117,7 +128,7 @@ class Home extends React.Component {
     //   }
     // });
     console.log("mounted")
-    db.collection("companies").get().then((querySnapshot) => {
+    db.collection("companies").onSnapshot((querySnapshot) => {
       this.setState({
         companies: querySnapshot.docs.map((doc) => {return Object.assign({companyid: doc.id}, doc.data())})
       });
@@ -128,7 +139,7 @@ class Home extends React.Component {
         this.setState({
           loggedIn: true
         });
-        db.collection("users").doc(user.uid).collection("userCompanies").get().onSnapshot((querySnapshot) => {
+        db.collection("users").doc(user.uid).collection("userCompanies").onSnapshot((querySnapshot) => {
           var userCompanies = {};
           for(var i=0; i<querySnapshot.docs.length; i++) {
             var doc = querySnapshot.docs[i];
@@ -279,6 +290,7 @@ class Home extends React.Component {
           modal={false}
           open={this.state.dialogOpen}
           onRequestClose={this.oc.closeDialog}
+          autoScrollBodyContent={true}
         >
           {this.state.dialogJSX}
         </Dialog>

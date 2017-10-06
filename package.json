@@ -12,6 +12,7 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.1",
     "firebase": "^4.5.0",
+    "fixed-data-table": "^0.6.4",
     "foreman": "^2.0.0",
     "history": "^4.7.2",
     "http": "0.0.0",

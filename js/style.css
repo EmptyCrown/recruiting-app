@@ -200,10 +200,10 @@ i.rotating-button.disable-rotation:hover {
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
-    position: absolute;
+    position: static;
     z-index: 1;
-    margin-left: -75px;
-    margin-top: 65px;
+    margin-left: -35px;
+    margin-top: 100px;
     
     /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
     opacity: 0;

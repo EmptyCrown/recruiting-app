@@ -4,8 +4,8 @@ import {
   Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle,
   DropDownMenu, MenuItem, RaisedButton, FlatButton, IconButton,
   Drawer, TextField, Subheader, IconMenu, Avatar, SelectField,
-  Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn,
-  List, ListItem, Tabs, Tab, DatePicker, CircularProgress, Paper, FontIcon
+  List, ListItem, Tabs, Tab, DatePicker, CircularProgress, Paper, FontIcon,
+  RadioButton, RadioButtonGroup
 } from 'material-ui';
 import EditIcon from 'material-ui/svg-icons/image/edit';
 import { green700, white, amber600, grey200, red400, red500, red600, blue200, blue400, blue500, deepOrange500, amber400,
@@ -16,6 +16,7 @@ import PublicIcon from 'material-ui/svg-icons/social/public';
 import PrivateIcon from 'material-ui/svg-icons/action/account-circle';
 import StarIcon from 'material-ui/svg-icons/toggle/star';
 
+import OfferTable from './OfferTable';
 import ExperienceCard from './ExperienceCard';
 
 import {
@@ -54,7 +55,9 @@ export default class CompanyProfile extends React.Component {
       company: {},
       userCompany: {},
       tab: 'a',
-      newContact: {}
+      newContact: {},
+      newXp: {medium: "OCS/Crimson Careers"},
+      newOffer: {}
     };
   }
 
@@ -105,10 +108,12 @@ export default class CompanyProfile extends React.Component {
         <div className="centering">
           <TextField
             floatingLabelText="Contact name"
+            fullWidth={true}
             onChange={(event, value) => {this.setState({newContact: Object.assign(this.state.newContact, {name: value})})}}
           /><br />
           <TextField
             floatingLabelText="Title (Optional)"
+            fullWidth={true}
             onChange={(event, value) => {this.setState({newContact: Object.assign(this.state.newContact, {title: value})})}}
             style={{paddingLeft: 16}}
           /><br />
@@ -116,6 +121,7 @@ export default class CompanyProfile extends React.Component {
         <div className="centering">
           <TextField
             floatingLabelText="Email"
+            fullWidth={true}
             onChange={(event, value) => {this.setState({newContact: Object.assign(this.state.newContact, {email: value})})}}
           /><br />
         </div>
@@ -147,6 +153,172 @@ export default class CompanyProfile extends React.Component {
     )
   };
 
+  handleAddXp = () => {
+    this.props.oc.openDialog(
+      <div>
+        <div className="centering">
+          <RadioButtonGroup name="xp" style={{width: '100%', marginTop: 16}} onChange={(event, value) => {this.setState({newXp: Object.assign(this.state.newXp, {nature: value})})}}>
+            <RadioButton
+              value="Applied Here"
+              label="I applied here"
+              style={styles.radioButton}
+            />
+            <RadioButton
+              value="Final Round"
+              label="I went through the entire app process"
+              style={styles.radioButton}
+            />
+            <RadioButton
+              value="Offer"
+              label="I got an offer"
+              style={styles.radioButton}
+            />
+            <RadioButton
+              value="Worked Here"
+              label="I worked here"
+              style={styles.radioButton}
+            />
+            <RadioButton
+              value="None"
+              label="None of the above"
+              style={styles.radioButton}
+            />
+          </RadioButtonGroup>
+        </div>
+        <div className="centering">
+          <SelectField
+            floatingLabelText="Applied through"
+            onChange={(event, index, value) => {this.setState({newXp: Object.assign(this.state.newXp, {medium: value})})}}
+            fullWidth={true}
+            value={this.state.newXp.medium}
+          >
+            <MenuItem value={"OCS/Crimson Careers"} primaryText="OCS/Crimson Careers" />
+            <MenuItem value={"Company Website"} primaryText="Company Website" />
+            <MenuItem value={"HR/Recruiter"} primaryText="HR/Recruiter" />
+            <MenuItem value={"Referral"} primaryText="Referral" />
+            <MenuItem value={"Other"} primaryText="Other" />
+          </SelectField><br/>
+          <DatePicker 
+            floatingLabelText="Applied around" 
+            mode="landscape" 
+            fullWidth={true}
+            onChange={(event, date) => {this.setState({newXp: Object.assign(this.state.newXp, {date: date.toLocaleDateString()})})}}
+            style={{paddingLeft: 16}}
+          /><br />
+        </div>
+        <div className="centering">
+          <TextField
+            floatingLabelText="What was your experience like?"
+            fullWidth={true}
+            multiLine={true}
+            rows={3}
+            rowsMax={10}
+            onChange={(event, value) => {this.setState({newXp: Object.assign(this.state.newXp, {comments: value})})}}
+          /><br />
+        </div>
+        <div className="centering">
+          <TextField
+            floatingLabelText="What should people know when applying?"
+            fullWidth={true}
+            multiLine={true}
+            rows={3}
+            rowsMax={10}
+            onChange={(event, value) => {this.setState({newXp: Object.assign(this.state.newXp, {advice: value})})}}
+          /><br />
+        </div>
+      </div>,
+      [
+        <FlatButton
+          label="Cancel"
+          secondary={true}
+          onClick={this.props.oc.closeDialog}
+        />,
+        <FlatButton
+          label="Submit"
+          primary={true}
+          onClick={() => {
+            var { company } = this.state;
+            if(!company.xp) company.xp = [];
+            company.xp.push(this.state.newXp);
+            this.setState({
+              company: company,
+              newXp: {medium: "OCS/Crimson Careers"}
+            }, () => {
+              //write to firestore
+              var db = firebase.firestore();
+              db.collection("companies").doc(this.props.companyid).update(this.state.company);
+            });
+            this.props.oc.closeDialog();
+          }}
+        />,
+      ]
+    );
+  };
+
+  handleAddOffer = () => {
+    this.props.oc.openDialog(
+      <div>
+        <div className="centering">
+          <RadioButtonGroup name="offer" style={{width: '100%', marginTop: 16}} onChange={(event, value) => {this.setState({newOffer: Object.assign(this.state.newOffer, {type: value})})}}>
+            <RadioButton
+              value="Internship"
+              label="Internship"
+              style={styles.radioButton}
+            />
+            <RadioButton
+              value="Full-time"
+              label="Full-time"
+              style={styles.radioButton}
+            />
+          </RadioButtonGroup>
+        </div>
+        <div className="centering">
+          <TextField
+            floatingLabelText="Salary"
+            fullWidth={true}
+            onChange={(event, value) => {this.setState({newOffer: Object.assign(this.state.newOffer, {salary: value})})}}
+          /><br />
+          <TextField
+            floatingLabelText="Bonus(es)"
+            fullWidth={true}
+            onChange={(event, value) => {this.setState({newOffer: Object.assign(this.state.newOffer, {bonus: value})})}}
+            style={{paddingLeft: 16}}
+          /><br />
+        </div>
+        <DatePicker 
+          floatingLabelText="Received around" 
+          mode="landscape" 
+          fullWidth={true}
+          onChange={(event, date) => {this.setState({newOffer: Object.assign(this.state.newOffer, {date: date.toLocaleDateString()})})}}
+        /><br />
+      </div>,
+      [
+        <FlatButton
+          label="Cancel"
+          secondary={true}
+          onClick={this.props.oc.closeDialog}
+        />,
+        <FlatButton
+          label="Submit"
+          primary={true}
+          onClick={() => {
+            var { company } = this.state;
+            if(!company.offers) company.offers = [];
+            company.offers.push(this.state.newOffer);
+            this.setState({
+              company: company,
+              newOffer: {}
+            });
+            //write to firestore
+            var db = firebase.firestore();
+            db.collection("companies").doc(this.props.companyid).update(this.state.company);
+            this.props.oc.closeDialog();
+          }}
+        />,
+      ]
+    )
+  };
+
   componentDidMount() {
     this.getCompany(this.props);
   }
@@ -156,6 +328,7 @@ export default class CompanyProfile extends React.Component {
   }
 
   render() {
+    var divHeight = $(window).height() - 141;
     return (
       <div>
         <ListItem
@@ -197,7 +370,7 @@ export default class CompanyProfile extends React.Component {
           tabItemContainerStyle={{backgroundColor: grey700}}
         >
           <Tab label="Community" value="a" icon={<PublicIcon/>} >
-            <div style={{paddingLeft: '16px', paddingRight: '16px', maxHeight: $(window).height() - 141 - 16, overflow: 'auto'}} ref='prof'>
+            <div style={{paddingLeft: '16px', paddingRight: '16px', height: divHeight, overflow: 'auto'}} ref='prof'>
               <PageHeader style={styles.header}>
                 <span className="rowRL">
                   <span>General Info </span>
@@ -207,7 +380,7 @@ export default class CompanyProfile extends React.Component {
                   </span>
                 </span>
               </PageHeader>
-              <div style={{minHeight: 120, maxHeight:200, overflow: "auto"}}>
+              <div style={{minHeight: 120}}>
                 {this.state.company.general ||
                   <p>
                     <span style={{color: green400}}>Pros: </span>
@@ -223,11 +396,11 @@ export default class CompanyProfile extends React.Component {
                   <span>Points of Contact</span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
                     <i className="material-icons rotating-button green" onTouchTap={this.handleAddContact}>add</i>
-                    <span className="tooltip-text">Add Info</span>
+                    <span className="tooltip-text">Add Contact</span>
                   </span>
                 </span>
               </PageHeader>
-              <div style={{minHeight: 120, maxHeight:200, overflow: "auto"}}>
+              <div style={{minHeight: 120}}>
                 {(this.state.company.contacts && this.state.company.contacts.length > 0) ?
                   <div>
                     {this.state.company.contacts.map((contact, index) => <div key={index}><strong>{contact.name + ": "}</strong>{contact.email}</div>)}
@@ -240,15 +413,15 @@ export default class CompanyProfile extends React.Component {
                 <span className="rowRL">
                   <span>Experiences & Tips </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button orange" onTouchTap={this.handleAddChannel}>add</i>
-                    <span className="tooltip-text">Add Info</span>
+                    <i className="material-icons rotating-button orange" onTouchTap={this.handleAddXp}>add</i>
+                    <span className="tooltip-text">Add XP</span>
                   </span>
                 </span>
               </PageHeader>
-              <div style={{minHeight: 120, maxHeight:400, overflow: "auto"}}>
+              <div style={{minHeight: 120}}>
                 {this.state.company.xp ?
-                  this.state.company.xp.map((xp) => {
-                    <ExperienceCard oc={this.props.oc} xp={xp} />
+                  this.state.company.xp.map((xp, index) => {
+                    return <ExperienceCard oc={this.props.oc} xp={xp} key={index}/>
                   })
                 :
                   <div>No posts at this time.</div>
@@ -258,12 +431,14 @@ export default class CompanyProfile extends React.Component {
                 <span className="rowRL">
                   <span>Offers </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button red" onTouchTap={this.handleAddChannel}>add</i>
-                    <span className="tooltip-text">Add Info</span>
+                    <i className="material-icons rotating-button red" onTouchTap={this.handleAddOffer}>add</i>
+                    <span className="tooltip-text">Add Offer</span>
                   </span>
                 </span>
               </PageHeader>
-              <div style={{minHeight: 120, maxHeight:200, overflow: "auto"}}>{this.state.company.website}</div>
+              <div style={{minHeight: 120}}>
+                <OfferTable data={this.state.company.offers || []} />
+              </div>
             </div>
           </Tab>
           <Tab label="My Details" value="b" icon={<PrivateIcon/>} >
@@ -288,7 +463,7 @@ export default class CompanyProfile extends React.Component {
                 floatingLabelText="Start Date" 
                 mode="landscape" 
                 fullWidth={true}
-                onChange={(event, date) => {this.updateUserCompany("startDate", date)}}
+                onChange={(event, date) => {this.updateUserCompany("startDate", date.toLocaleDateString())}}
                 disabled={!firebase.auth().currentUser}
               />
               <PageHeader style={styles.header}>
@@ -300,7 +475,7 @@ export default class CompanyProfile extends React.Component {
                   </span>
                 </span>
               </PageHeader>
-              <div style={{minHeight: 120, maxHeight:200, overflow: "auto"}}>
+              <div style={{minHeight: 120}}>
                 {this.state.userCompany.notes || <div>None for now</div>}
               </div>
             </div>
