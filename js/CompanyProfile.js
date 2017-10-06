@@ -376,7 +376,6 @@ export default class CompanyProfile extends React.Component {
                   <span>General Info </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
                     <i className="material-icons rotating-button teal" onTouchTap={this.handleAddChannel}>mode_edit</i>
-                    <span className="tooltip-text">Edit Info</span>
                   </span>
                 </span>
               </PageHeader>
@@ -396,7 +395,6 @@ export default class CompanyProfile extends React.Component {
                   <span>Points of Contact</span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
                     <i className="material-icons rotating-button green" onTouchTap={this.handleAddContact}>add</i>
-                    <span className="tooltip-text">Add Contact</span>
                   </span>
                 </span>
               </PageHeader>
@@ -414,7 +412,6 @@ export default class CompanyProfile extends React.Component {
                   <span>Experiences & Tips </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
                     <i className="material-icons rotating-button orange" onTouchTap={this.handleAddXp}>add</i>
-                    <span className="tooltip-text">Add XP</span>
                   </span>
                 </span>
               </PageHeader>
@@ -432,7 +429,6 @@ export default class CompanyProfile extends React.Component {
                   <span>Offers </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
                     <i className="material-icons rotating-button red" onTouchTap={this.handleAddOffer}>add</i>
-                    <span className="tooltip-text">Add Offer</span>
                   </span>
                 </span>
               </PageHeader>

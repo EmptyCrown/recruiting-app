@@ -2,7 +2,7 @@ import React from 'react';
 import io from 'socket.io-client';
 import {
   Paper, CircularProgress, Dialog, FlatButton, Drawer,
-  TextField, FontIcon
+  TextField, FontIcon, Snackbar
 } from 'material-ui';
 import { green700, white, amber600, grey200, red400, red500, red600, blue200, blue400, blue500, deepOrange500, amber400,
           grey500, grey700, darkBlack, green500, yellow500, green400, green600, greenA700, grey400, cyanA400, cyanA700,
@@ -304,6 +304,14 @@ class Home extends React.Component {
         >
           {this.state.drawerJSX}
         </Drawer>
+        <Snackbar
+          open={!this.state.loggedIn && !this.state.closeSnackbar}
+          message={"Click the logo to log in"}
+          action="OK"
+          autoHideDuration={4000}
+          onActionTouchTap={() => {this.setState({closeSnackbar: true})}}
+          onRequestClose={() => {this.setState({closeSnackbar: true})}}
+        />
       </div>
     );
   }

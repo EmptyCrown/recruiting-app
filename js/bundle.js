@@ -23314,11 +23314,6 @@ var CompanyProfile = function (_React$Component) {
                       'i',
                       { className: 'material-icons rotating-button teal', onTouchTap: this.handleAddChannel },
                       'mode_edit'
-                    ),
-                    _react2.default.createElement(
-                      'span',
-                      { className: 'tooltip-text' },
-                      'Edit Info'
                     )
                   )
                 )
@@ -23362,11 +23357,6 @@ var CompanyProfile = function (_React$Component) {
                       'i',
                       { className: 'material-icons rotating-button green', onTouchTap: this.handleAddContact },
                       'add'
-                    ),
-                    _react2.default.createElement(
-                      'span',
-                      { className: 'tooltip-text' },
-                      'Add Contact'
                     )
                   )
                 )
@@ -23409,11 +23399,6 @@ var CompanyProfile = function (_React$Component) {
                       'i',
                       { className: 'material-icons rotating-button orange', onTouchTap: this.handleAddXp },
                       'add'
-                    ),
-                    _react2.default.createElement(
-                      'span',
-                      { className: 'tooltip-text' },
-                      'Add XP'
                     )
                   )
                 )
@@ -23447,11 +23432,6 @@ var CompanyProfile = function (_React$Component) {
                       'i',
                       { className: 'material-icons rotating-button red', onTouchTap: this.handleAddOffer },
                       'add'
-                    ),
-                    _react2.default.createElement(
-                      'span',
-                      { className: 'tooltip-text' },
-                      'Add Offer'
                     )
                   )
                 )
@@ -54380,7 +54360,19 @@ var Home = function (_React$Component) {
             }
           },
           this.state.drawerJSX
-        )
+        ),
+        _react2.default.createElement(_materialUi.Snackbar, {
+          open: !this.state.loggedIn && !this.state.closeSnackbar,
+          message: "Click the logo to log in",
+          action: 'OK',
+          autoHideDuration: 4000,
+          onActionTouchTap: function onActionTouchTap() {
+            _this3.setState({ closeSnackbar: true });
+          },
+          onRequestClose: function onRequestClose() {
+            _this3.setState({ closeSnackbar: true });
+          }
+        })
       );
     }
   }]);
