@@ -1,0 +1,217 @@
+body {
+  background: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img.logo {
+   padding:1px;
+   border:1px solid #ECEFF1;
+}
+
+.rowC {
+	display: flex;
+	flex-direction: row;
+}
+
+.rowB {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.rowRL {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.hidden {
+	display: none;
+}
+
+.centering {
+	display: flex;
+	align-items: center;
+	justify-content: center
+}
+
+.search-bar {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	height: 75px;
+}
+
+/*Fancy rotating buttons*/
+
+i.rotating-button {
+	font-size: 0.7rem;
+	color: white;
+	position: relative;
+	border-radius: 50%;
+	padding: 5px;
+	margin: 3px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+	transition: color 0.2s ease, background-color 0.2s ease, transform 0.3s ease;
+	border: solid 2px;
+	border-color: transparent;
+}
+
+
+i.rotating-button.green {
+		background-color: #88b999;
+}
+
+i.rotating-button.green:hover {
+		color: #88b999;
+}
+
+i.rotating-button.green {
+		border-color: #88b999;
+}
+
+i.rotating-button.teal {
+		background-color: #88b2b9;
+}
+
+i.rotating-button.teal:hover {
+		color: #88b2b9;
+}
+
+i.rotating-button.teal {
+		border-color: #88b2b9;
+}
+
+i.rotating-button.blue {
+		background-color: #8897b9;
+}
+
+i.rotating-button.blue:hover {
+		color: #8897b9;
+}
+
+i.rotating-button.blue {
+		border-color: #8897b9;
+}
+
+i.rotating-button.purple {
+		background-color: #af88b9;
+}
+
+i.rotating-button.purple:hover {
+		color: #af88b9;
+}
+
+i.rotating-button.purple {
+		border-color: #af88b9;
+}
+
+i.rotating-button.pink {
+		background-color: #d59acb;
+}
+
+i.rotating-button.pink:hover {
+		color: #d59acb;
+}
+
+i.rotating-button.pink {
+		border-color: #d59acb;
+}
+
+i.rotating-button.red {
+		background-color: #cd8484;
+}
+
+i.rotating-button.red:hover {
+		color: #cd8484;
+}
+
+i.rotating-button.red {
+		border-color: #cd8484;
+}
+
+i.rotating-button.orange {
+		background-color: #ec9f83;
+}
+
+i.rotating-button.orange:hover {
+		color: #ec9f83;
+}
+
+i.rotating-button.orange {
+		border-color: #ec9f83;
+}
+
+i.rotating-button.yellow {
+		background-color: #DAA520;
+}
+
+i.rotating-button.yellow:hover {
+		color: #DAA520;
+}
+
+i.rotating-button.yellow {
+		border-color: #DAA520;
+}
+
+i.rotating-button:hover {
+	border: solid 2px;
+	background-color: transparent;
+	transform: rotate(90deg) scale(1.1);
+	cursor: pointer;
+	box-shadow: 10px 0 20px rgba(0, 0, 0, 0.19), 6px 0 6px rgba(0, 0, 0, 0.23);
+}
+
+i.rotating-button.disable-rotation:hover {
+	transform: scale(1.1);
+}
+
+
+@media (min-width:601px) {
+	i.rotating-button {
+		padding:10px;
+		margin:5px;
+		font-size:2rem;
+	}
+}
+
+@media (min-width:993px) {
+	i.rotating-button {
+		padding:10px;
+		margin:10px 5px 10px;
+		font-size:2.5rem;
+	}
+	i.rotating-button:after {
+		border-width:3px;
+		top:-3px;
+		left:-3px;
+	}
+}
+
+
+.tooltip-container .tooltip-text {
+    visibility: hidden;
+    width: 90px;
+    background-color: #424242;
+    color: #fff;
+    font-size: 10px;
+    font-family: 'PT Sans';
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    margin-left: -75px;
+    margin-top: 65px;
+    
+    /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 1s;
+}
