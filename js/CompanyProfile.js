@@ -65,7 +65,7 @@ export default class CompanyProfile extends React.Component {
 
   getCompany = (props) => {
     var db = firebase.firestore();
-    db.collection("companies").doc(props.companyid).onSnapshot((doc) => {
+    db.collection("companies").doc(props.companyid).get().then((doc) => {
       if(doc.exists) {
         var company = doc.data();
         this.setState({
@@ -76,8 +76,9 @@ export default class CompanyProfile extends React.Component {
 
     var user = firebase.auth().currentUser;
     if(user && user.uid) {
-      db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).onSnapshot((doc) => {
+      db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).get().then((doc) => {
         if(doc.exists) {
+          console.log(doc.data())
           this.setState({
             userCompany: doc.data()
           });
@@ -311,6 +312,7 @@ export default class CompanyProfile extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.getCompany(nextProps);
+    console.log("Company ID", nextProps.companyid);
     //Reset state
     this.setState({
       tab: 'a',

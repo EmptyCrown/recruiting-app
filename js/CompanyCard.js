@@ -24,9 +24,9 @@ const styles = {
   },
   bookmark: {
     color: amberA700,
-    position: 'absolute',
-    top: 16,
-    left: 37
+    position: 'relative',
+    top: -200,
+    left: 12
   }
 }
 

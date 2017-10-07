@@ -23221,6 +23221,7 @@ var CompanyProfile = function (_React$Component) {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
       this.getCompany(nextProps);
+      console.log("Company ID", nextProps.companyid);
       //Reset state
       this.setState({
         tab: 'a',
@@ -23537,7 +23538,7 @@ var _initialiseProps = function _initialiseProps() {
 
   this.getCompany = function (props) {
     var db = firebase.firestore();
-    db.collection("companies").doc(props.companyid).onSnapshot(function (doc) {
+    db.collection("companies").doc(props.companyid).get().then(function (doc) {
       if (doc.exists) {
         var company = doc.data();
         _this3.setState({
@@ -23548,8 +23549,9 @@ var _initialiseProps = function _initialiseProps() {
 
     var user = firebase.auth().currentUser;
     if (user && user.uid) {
-      db.collection("users").doc(user.uid).collection("userCompanies").doc(_this3.props.companyid).onSnapshot(function (doc) {
+      db.collection("users").doc(user.uid).collection("userCompanies").doc(_this3.props.companyid).get().then(function (doc) {
         if (doc.exists) {
+          console.log(doc.data());
           _this3.setState({
             userCompany: doc.data()
           });
@@ -81923,9 +81925,9 @@ var styles = {
   },
   bookmark: {
     color: _colors.amberA700,
-    position: 'absolute',
-    top: 16,
-    left: 37
+    position: 'relative',
+    top: -200,
+    left: 12
   }
 };
 
