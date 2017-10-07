@@ -18,6 +18,7 @@ import StarIcon from 'material-ui/svg-icons/toggle/star';
 
 import OfferTable from './OfferTable';
 import ExperienceCard from './ExperienceCard';
+import AddXp from './AddXp';
 
 import {
   DropdownButton,
@@ -57,7 +58,8 @@ export default class CompanyProfile extends React.Component {
       tab: 'a',
       newContact: {},
       newXp: {medium: "OCS/Crimson Careers"},
-      newOffer: {}
+      newOffer: {},
+      newNote: ""
     };
   }
 
@@ -78,7 +80,11 @@ export default class CompanyProfile extends React.Component {
         if(doc.exists) {
           this.setState({
             userCompany: doc.data()
-          })
+          });
+        } else {
+          this.setState({
+            userCompany: {}
+          });
         }
       });
     }
@@ -88,6 +94,12 @@ export default class CompanyProfile extends React.Component {
     this.setState({
       company: Object.assign(this.state.company, {[field]: value})
     })
+  };
+
+  editStateObject = (object, field, value) => {
+    this.setState({
+      [object]: Object.assign(this.state[object], {[field]: value})
+    });
   };
 
   updateUserCompany = (field, value) => {
@@ -156,76 +168,7 @@ export default class CompanyProfile extends React.Component {
   handleAddXp = () => {
     this.props.oc.openDialog(
       <div>
-        <div className="centering">
-          <RadioButtonGroup name="xp" style={{width: '100%', marginTop: 16}} onChange={(event, value) => {this.setState({newXp: Object.assign(this.state.newXp, {nature: value})})}}>
-            <RadioButton
-              value="Applied Here"
-              label="I applied here"
-              style={styles.radioButton}
-            />
-            <RadioButton
-              value="Final Round"
-              label="I went through the entire app process"
-              style={styles.radioButton}
-            />
-            <RadioButton
-              value="Offer"
-              label="I got an offer"
-              style={styles.radioButton}
-            />
-            <RadioButton
-              value="Worked Here"
-              label="I worked here"
-              style={styles.radioButton}
-            />
-            <RadioButton
-              value="None"
-              label="None of the above"
-              style={styles.radioButton}
-            />
-          </RadioButtonGroup>
-        </div>
-        <div className="centering">
-          <SelectField
-            floatingLabelText="Applied through"
-            onChange={(event, index, value) => {this.setState({newXp: Object.assign(this.state.newXp, {medium: value})})}}
-            fullWidth={true}
-            value={this.state.newXp.medium}
-          >
-            <MenuItem value={"OCS/Crimson Careers"} primaryText="OCS/Crimson Careers" />
-            <MenuItem value={"Company Website"} primaryText="Company Website" />
-            <MenuItem value={"HR/Recruiter"} primaryText="HR/Recruiter" />
-            <MenuItem value={"Referral"} primaryText="Referral" />
-            <MenuItem value={"Other"} primaryText="Other" />
-          </SelectField><br/>
-          <DatePicker 
-            floatingLabelText="Applied around" 
-            mode="landscape" 
-            fullWidth={true}
-            onChange={(event, date) => {this.setState({newXp: Object.assign(this.state.newXp, {date: date.toLocaleDateString()})})}}
-            style={{paddingLeft: 16}}
-          /><br />
-        </div>
-        <div className="centering">
-          <TextField
-            floatingLabelText="What was your experience like?"
-            fullWidth={true}
-            multiLine={true}
-            rows={3}
-            rowsMax={10}
-            onChange={(event, value) => {this.setState({newXp: Object.assign(this.state.newXp, {comments: value})})}}
-          /><br />
-        </div>
-        <div className="centering">
-          <TextField
-            floatingLabelText="What should people know when applying?"
-            fullWidth={true}
-            multiLine={true}
-            rows={3}
-            rowsMax={10}
-            onChange={(event, value) => {this.setState({newXp: Object.assign(this.state.newXp, {advice: value})})}}
-          /><br />
-        </div>
+        <AddXp editStateObject={this.editStateObject} newXp={this.state.newXp} />
       </div>,
       [
         <FlatButton
@@ -237,9 +180,15 @@ export default class CompanyProfile extends React.Component {
           label="Submit"
           primary={true}
           onClick={() => {
-            var { company } = this.state;
+            var { company, newXp } = this.state;
             if(!company.xp) company.xp = [];
-            company.xp.push(this.state.newXp);
+            //Add author info
+            var user = firebase.auth().currentUser;
+            newXp.author = user.displayName;
+            newXp.authorid = user.uid;
+            newXp.postDate = (new Date()).toLocaleDateString();
+            //Add to company object
+            company.xp.push(newXp);
             this.setState({
               company: company,
               newXp: {medium: "OCS/Crimson Careers"}
@@ -302,9 +251,15 @@ export default class CompanyProfile extends React.Component {
           label="Submit"
           primary={true}
           onClick={() => {
-            var { company } = this.state;
+            var { company, newOffer } = this.state;
+            //Add author info
+            var user = firebase.auth().currentUser;
+            newOffer.author = user.displayName;
+            newOffer.authorid = user.uid;
+            newOffer.postDate = (new Date()).toLocaleDateString();
+            //Add to comapny object
             if(!company.offers) company.offers = [];
-            company.offers.push(this.state.newOffer);
+            company.offers.push(newOffer);
             this.setState({
               company: company,
               newOffer: {}
@@ -319,12 +274,51 @@ export default class CompanyProfile extends React.Component {
     )
   };
 
+  handleEditNote = () => {
+    this.props.oc.openDialog(
+      <div>
+        <div className="centering">
+          <TextField
+            floatingLabelText="Personal notes"
+            fullWidth={true}
+            multiLine={true}
+            rows={3}
+            rowsMax={10}
+            onChange={(event, value) => {this.setState({newNote: value})}}
+          /><br />
+        </div>
+      </div>,
+      [
+        <FlatButton
+          label="Cancel"
+          secondary={true}
+          onClick={this.props.oc.closeDialog}
+        />,
+        <FlatButton
+          label="Submit"
+          primary={true}
+          onClick={() => {
+            this.updateUserCompany("notes", this.state.newNote)
+          }}
+        />,
+      ]
+    )
+  };
+
   componentDidMount() {
     this.getCompany(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
     this.getCompany(nextProps);
+    //Reset state
+    this.setState({
+      tab: 'a',
+      newContact: {},
+      newXp: {medium: "OCS/Crimson Careers"},
+      newOffer: {},
+      newNote: ""
+    })
   }
 
   render() {
@@ -375,7 +369,7 @@ export default class CompanyProfile extends React.Component {
                 <span className="rowRL">
                   <span>General Info </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button teal" onTouchTap={this.handleAddChannel}>mode_edit</i>
+                    <i className="material-icons rotating-button teal" onTouchTap={this.props.oc.openSnackbar.bind(null, "Admin privileges required")}>mode_edit</i>
                   </span>
                 </span>
               </PageHeader>
@@ -394,7 +388,7 @@ export default class CompanyProfile extends React.Component {
                 <span className="rowRL">
                   <span>Points of Contact</span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button green" onTouchTap={this.handleAddContact}>add</i>
+                    <i className="material-icons rotating-button green" onTouchTap={firebase.auth().currentUser ? this.handleAddContact : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
                   </span>
                 </span>
               </PageHeader>
@@ -411,7 +405,7 @@ export default class CompanyProfile extends React.Component {
                 <span className="rowRL">
                   <span>Experiences & Tips </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button orange" onTouchTap={this.handleAddXp}>add</i>
+                    <i className="material-icons rotating-button orange" onTouchTap={firebase.auth().currentUser ? this.handleAddXp : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
                   </span>
                 </span>
               </PageHeader>
@@ -428,7 +422,7 @@ export default class CompanyProfile extends React.Component {
                 <span className="rowRL">
                   <span>Offers </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button red" onTouchTap={this.handleAddOffer}>add</i>
+                    <i className="material-icons rotating-button red" onTouchTap={firebase.auth().currentUser ? this.handleAddOffer : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
                   </span>
                 </span>
               </PageHeader>
@@ -466,8 +460,7 @@ export default class CompanyProfile extends React.Component {
                 <span className="rowRL">
                   <span>Notes</span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button teal" onTouchTap={this.handleAddChannel}>mode_edit</i>
-                    <span className="tooltip-text">Edit Info</span>
+                    <i className="material-icons rotating-button teal" onTouchTap={firebase.auth().currentUser ? this.handleEditNote : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>mode_edit</i>
                   </span>
                 </span>
               </PageHeader>

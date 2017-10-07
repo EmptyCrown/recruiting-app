@@ -35,12 +35,14 @@ class Home extends React.Component {
       searchQuery: '',
       dialogOpen: false,
       drawerOpen: false,
+      snackbarOpen: false,
       usersOnline: 1
     };
     this.oc = {
       openDialog: ((jsx, actions) => {this.setState({dialogOpen: true, dialogJSX: jsx, dialogActions: actions})}),
       closeDialog: (() => {this.setState({dialogOpen: false})}),
-      openDrawer: ((jsx) => {this.setState({drawerOpen: true, drawerJSX: jsx})})
+      openDrawer: ((jsx) => {this.setState({drawerOpen: true, drawerJSX: jsx})}),
+      openSnackbar: ((message) => {this.setState({snackbarOpen: true, snackbarMessage: message})})
     };
   }
 
@@ -127,7 +129,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     var db = firebase.firestore();
-    // $.getJSON("/companies3.json", function(json) {
+    // $.getJSON("/companiesExtra.json", function(json) {
     //   var companies = json.companies;
     //   for(var i = 0; i<companies.length; i++) {
     //     var doc = companies[i];
@@ -158,8 +160,9 @@ class Home extends React.Component {
         });
       } else {
         this.setState({
-          userCompanies: {}
+          userCompanies: {},
         });
+        this.oc.openSnackbar('Click the logo to log in with Harvard email');
       }
     });
 
@@ -312,12 +315,12 @@ class Home extends React.Component {
           {this.state.drawerJSX}
         </Drawer>
         <Snackbar
-          open={!this.state.loggedIn && !this.state.closeSnackbar}
-          message={"Click the logo to log in"}
+          open={this.state.snackbarOpen}
+          message={this.state.snackbarMessage || ""}
           action="OK"
           autoHideDuration={4000}
-          onActionTouchTap={() => {this.setState({closeSnackbar: true})}}
-          onRequestClose={() => {this.setState({closeSnackbar: true})}}
+          onActionTouchTap={() => {this.setState({snackbarOpen: false})}}
+          onRequestClose={() => {this.setState({snackbarOpen: false})}}
         />
       </div>
     );
