@@ -263,7 +263,7 @@ class Home extends React.Component {
               <FlatButton
                 label="Only Mine"
                 style={{height: 75, borderRadius: 0, color: white}}
-                icon={<FontIcon className="material-icons">account_circle</FontIcon>}
+                icon={<FontIcon className="material-icons">bookmark</FontIcon>}
                 backgroundColor={amberA400}
                 hoverColor={amberA700}
                 onTouchTap={() => {this.setState({ownFilter: false})}}
@@ -273,7 +273,7 @@ class Home extends React.Component {
                 label="Only Mine"
                 secondary={true}
                 style={{height: 75, borderRadius: 0}}
-                icon={<FontIcon className="material-icons">account_circle</FontIcon>}
+                icon={<FontIcon className="material-icons">bookmark</FontIcon>}
                 onTouchTap={() => {this.setState({ownFilter: true})}}
               />
             }

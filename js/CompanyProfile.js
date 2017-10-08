@@ -149,17 +149,27 @@ export default class CompanyProfile extends React.Component {
           label="Submit"
           primary={true}
           onClick={() => {
-            var { company } = this.state;
-            if(!company.contacts) company.contacts = [];
-            company.contacts.push(this.state.newContact);
-            this.setState({
-              company: company,
-              newContact: {}
-            });
-            //write to firestore
-            var db = firebase.firestore();
-            db.collection("companies").doc(this.props.companyid).update(this.state.company);
-            this.props.oc.closeDialog();
+            var { company, newContact } = this.state;
+            if(newContact.name && newContact.email) {
+              if(!company.contacts) company.contacts = [];
+              //Add author info
+              var user = firebase.auth().currentUser;
+              newContact.author = user.displayName;
+              newContact.authorid = user.uid;
+              newContact.postDate = (new Date()).toLocaleDateString();
+              //Add to company object
+              company.contacts.push(newContact);
+              this.setState({
+                company: company,
+                newContact: {}
+              });
+              //write to firestore
+              var db = firebase.firestore();
+              db.collection("companies").doc(this.props.companyid).update(this.state.company);
+              this.props.oc.closeDialog();
+            } else {
+              this.props.oc.openSnackbar('Please fill out all required fields');
+            }
           }}
         />,
       ]
@@ -182,23 +192,27 @@ export default class CompanyProfile extends React.Component {
           primary={true}
           onClick={() => {
             var { company, newXp } = this.state;
-            if(!company.xp) company.xp = [];
-            //Add author info
-            var user = firebase.auth().currentUser;
-            newXp.author = user.displayName;
-            newXp.authorid = user.uid;
-            newXp.postDate = (new Date()).toLocaleDateString();
-            //Add to company object
-            company.xp.push(newXp);
-            this.setState({
-              company: company,
-              newXp: {medium: "OCS/Crimson Careers"}
-            }, () => {
-              //write to firestore
-              var db = firebase.firestore();
-              db.collection("companies").doc(this.props.companyid).update(this.state.company);
-            });
-            this.props.oc.closeDialog();
+            if(newXp.nature && newXp.medium && newXp.date && newXp.advice && newXp.comments) {
+              if(!company.xp) company.xp = [];
+              //Add author info
+              var user = firebase.auth().currentUser;
+              newXp.author = user.displayName;
+              newXp.authorid = user.uid;
+              newXp.postDate = (new Date()).toLocaleDateString();
+              //Add to company object
+              company.xp.push(newXp);
+              this.setState({
+                company: company,
+                newXp: {medium: "OCS/Crimson Careers"}
+              }, () => {
+                //write to firestore
+                var db = firebase.firestore();
+                db.collection("companies").doc(this.props.companyid).update(this.state.company);
+              });
+              this.props.oc.closeDialog();
+            } else {
+              this.props.oc.openSnackbar('Please fill out all fields');
+            }
           }}
         />,
       ]
@@ -253,22 +267,26 @@ export default class CompanyProfile extends React.Component {
           primary={true}
           onClick={() => {
             var { company, newOffer } = this.state;
-            //Add author info
-            var user = firebase.auth().currentUser;
-            newOffer.author = user.displayName;
-            newOffer.authorid = user.uid;
-            newOffer.postDate = (new Date()).toLocaleDateString();
-            //Add to comapny object
-            if(!company.offers) company.offers = [];
-            company.offers.push(newOffer);
-            this.setState({
-              company: company,
-              newOffer: {}
-            });
-            //write to firestore
-            var db = firebase.firestore();
-            db.collection("companies").doc(this.props.companyid).update(this.state.company);
-            this.props.oc.closeDialog();
+            if(newOffer.salary && newOffer.bonus && newOffer.date) {
+              //Add author info
+              var user = firebase.auth().currentUser;
+              newOffer.author = user.displayName;
+              newOffer.authorid = user.uid;
+              newOffer.postDate = (new Date()).toLocaleDateString();
+              //Add to comapny object
+              if(!company.offers) company.offers = [];
+              company.offers.push(newOffer);
+              this.setState({
+                company: company,
+                newOffer: {}
+              });
+              //write to firestore
+              var db = firebase.firestore();
+              db.collection("companies").doc(this.props.companyid).update(this.state.company);
+              this.props.oc.closeDialog();
+            } else {
+              this.props.oc.openSnackbar('Please fill out all fields');
+            }
           }}
         />,
       ]
@@ -299,7 +317,8 @@ export default class CompanyProfile extends React.Component {
           label="Submit"
           primary={true}
           onClick={() => {
-            this.updateUserCompany("notes", this.state.newNote)
+            this.updateUserCompany("notes", this.state.newNote);
+            this.props.oc.closeDialog();
           }}
         />,
       ]
@@ -417,7 +436,7 @@ export default class CompanyProfile extends React.Component {
                     return <ExperienceCard oc={this.props.oc} xp={xp} key={index}/>
                   })
                 :
-                  <div>No posts at this time.</div>
+                  <div>No posts at this time. Add any thoughts you have on working or applying here.</div>
                 }
               </div>
               <PageHeader style={styles.header}>
@@ -429,6 +448,7 @@ export default class CompanyProfile extends React.Component {
                 </span>
               </PageHeader>
               <div style={{minHeight: 120}}>
+                <div>Salary data from fellow students</div><br/>
                 <OfferTable data={this.state.company.offers || []} />
               </div>
             </div>
@@ -467,7 +487,7 @@ export default class CompanyProfile extends React.Component {
                 </span>
               </PageHeader>
               <div style={{minHeight: 120}}>
-                {this.state.userCompany.notes || <div>None for now</div>}
+                {this.state.userCompany.notes || <div>None for now.</div>}
               </div>
             </div>
           </Tab>

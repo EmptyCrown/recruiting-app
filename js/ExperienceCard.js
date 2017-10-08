@@ -38,7 +38,7 @@ class ExperienceCard extends React.Component {
 
   render() {
     return (
-      <Card>
+      <Card style={{marginBottom: 10}}>
         <CardHeader
           title="Anonymous"
           subtitle={this.props.xp.date}
