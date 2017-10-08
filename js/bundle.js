@@ -13141,20 +13141,22 @@ var _initialiseProps = function _initialiseProps() {
 
   this.getCompany = function (props) {
     var db = firebase.firestore();
-    db.collection("companies").doc(props.companyid).get().then(function (doc) {
-      if (doc.exists) {
-        var company = doc.data();
-        _this3.setState({
-          company: company
-        });
-      }
+    // db.collection("companies").doc(props.companyid).get().then((doc) => {
+    //   if(doc.exists) {
+    //     var company = doc.data();
+    //     this.setState({
+    //       company: company
+    //     })
+    //   }
+    // });
+    _this3.setState({
+      company: props.c
     });
 
     var user = firebase.auth().currentUser;
     if (user && user.uid) {
       db.collection("users").doc(user.uid).collection("userCompanies").doc(_this3.props.companyid).get().then(function (doc) {
         if (doc.exists) {
-          console.log(doc.data());
           _this3.setState({
             userCompany: doc.data()
           });
@@ -54330,6 +54332,7 @@ var Home = function (_React$Component) {
             companyid: c.companyid,
             squareLogo: c.squareLogo,
             oc: c.oc,
+            c: Object.assign({}, c),
             bookmarked: c.companyid in _this.state.userCompanies && _this.state.userCompanies[c.companyid].bookmarked });
         })
       );
@@ -82225,7 +82228,7 @@ var CompanyCard = function (_React$Component) {
         _materialUi.Card,
         {
           onTouchTap: function onTouchTap() {
-            _this2.props.oc.openDrawer(_react2.default.createElement(_CompanyProfile2.default, { oc: _this2.props.oc, companyid: _this2.props.companyid }));
+            _this2.props.oc.openDrawer(_react2.default.createElement(_CompanyProfile2.default, { oc: _this2.props.oc, c: _this2.props.c, companyid: _this2.props.companyid }));
           },
           style: { margin: 10, height: 230, width: 230, fontFamily: 'Raleway', backgroundColor: 'white', cursor: 'pointer', padding: 16 }
         },

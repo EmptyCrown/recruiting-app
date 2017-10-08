@@ -119,6 +119,7 @@ class Home extends React.Component {
                     companyid={c.companyid} 
                     squareLogo={c.squareLogo} 
                     oc={c.oc} 
+                    c={Object.assign({},c)}
                     bookmarked={c.companyid in this.state.userCompanies && this.state.userCompanies[c.companyid].bookmarked}/>}
         )}
       </div>
