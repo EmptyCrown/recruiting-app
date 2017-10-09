@@ -1,7 +1,7 @@
 body {
-  background: #fafafa;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	background: #fafafa;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 img.logo {
@@ -41,6 +41,12 @@ img.logo {
 	-moz-box-shadow: none;
 	box-shadow: none;
 	height: 75px;
+}
+
+.zoom {
+	zoom: 0.85;
+	-moz-transform: scale(0.85);
+    -moz-transform-origin: 0 0;
 }
 
 /*Fancy rotating buttons*/

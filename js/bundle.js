@@ -54232,6 +54232,8 @@ var _reactList = __webpack_require__(555);
 
 var _reactList2 = _interopRequireDefault(_reactList);
 
+var _reactBootstrap = __webpack_require__(570);
+
 var _CompanyCard = __webpack_require__(556);
 
 var _CompanyCard2 = _interopRequireDefault(_CompanyCard);
@@ -54251,6 +54253,10 @@ var styles = {
     borderWidth: 0,
     borderBottomWidth: 3,
     borderBottomColor: _colors.grey200
+  },
+  header: {
+    fontFamily: 'Ubuntu',
+    marginTop: -22
   }
 };
 
@@ -54323,7 +54329,7 @@ var Home = function (_React$Component) {
     };
 
     _this.renderCard = function (list, index, key) {
-      var sublist = list.slice(5 * index, 5 * index + 5);
+      var sublist = list.slice(4 * index, 4 * index + 4);
       return _react2.default.createElement(
         'div',
         { className: 'rowB centering', key: index },
@@ -54339,6 +54345,30 @@ var Home = function (_React$Component) {
             bookmarked: c.companyid in _this.state.userCompanies && _this.state.userCompanies[c.companyid].bookmarked });
         })
       );
+    };
+
+    _this.handleLogoClick = function () {
+      _this.oc.openDialog(_react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          _reactBootstrap.PageHeader,
+          { style: styles.header },
+          'Welcome to OfferIQ!'
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          'This is a real-time community open only to Harvard students, where you can read and write about experiences or advice in the recruiting process. You\'ll also be able to view salary statistics, and keep track of the companies you\'re interested in. It\'s like a Q-Guide for companies.',
+          _react2.default.createElement('br', null),
+          _react2.default.createElement('br', null),
+          'Please submit bugs or new company requests to jessetanzhang@college.harvard.edu.'
+        )
+      ), [_react2.default.createElement(_materialUi.FlatButton, {
+        label: 'Got it!',
+        primary: true,
+        onClick: _this.oc.closeDialog
+      })]);
     };
 
     _this.state = {
@@ -54390,7 +54420,6 @@ var Home = function (_React$Component) {
       // });
 
       //FIREBASE IMPLEMENTATION
-
       firebase.database().ref('companies/').on('value', function (snapshot) {
         if (snapshot.val()) {
           _this2.setState({
@@ -54453,11 +54482,26 @@ var Home = function (_React$Component) {
             { className: 'rowC' },
             _react2.default.createElement(
               'div',
-              { style: { marginLeft: 16, marginRight: -40 } },
-              this.state.loggedIn ? _react2.default.createElement('img', { src: '/logo2.png', height: 75 }) : _react2.default.createElement(
+              { style: { marginLeft: 16, marginRight: 16 } },
+              this.state.loggedIn ? _react2.default.createElement(
+                'div',
+                { onTouchTap: this.handleLogoClick, style: { cursor: 'pointer' } },
+                _react2.default.createElement('img', { src: '/logo.png', height: 35, style: { marginTop: 15 } })
+              ) : _react2.default.createElement(
                 'div',
                 { onTouchTap: this.signInGoogle, style: { cursor: 'pointer' } },
-                _react2.default.createElement('img', { src: '/logo1.png', height: 75 })
+                _react2.default.createElement(
+                  _materialUi.Badge,
+                  {
+                    badgeContent: _react2.default.createElement(
+                      _materialUi.FontIcon,
+                      { className: 'material-icons', color: _colors.white },
+                      'person'
+                    ),
+                    badgeStyle: { top: 12, right: 12, backgroundColor: _colors.pinkA400, fontSize: 12 }
+                  },
+                  _react2.default.createElement('img', { src: '/logo.png', height: 35, style: { marginTop: -5 } })
+                )
               )
             ),
             this.state.searchQuery ? _react2.default.createElement(

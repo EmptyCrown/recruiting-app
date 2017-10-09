@@ -1,16 +1,19 @@
 import React from 'react';
 import io from 'socket.io-client';
 import {
-  Paper, CircularProgress, Dialog, FlatButton, Drawer,
-  TextField, FontIcon, Snackbar
+  Paper, CircularProgress, Dialog, FlatButton, Drawer, Badge,
+  TextField, FontIcon, Snackbar, DatePicker
 } from 'material-ui';
 import { green700, white, amber600, grey200, red400, red500, red600, blue200, blue400, blue500, deepOrange500, amber400,
           grey500, grey700, darkBlack, green500, yellow500, green400, green600, greenA700, grey400, cyanA400, cyanA700,
-          green200, red200, amber200, orange200, orange400, green50, amberA400, amberA700} from 'material-ui/styles/colors';
+          green200, red200, amber200, orange200, orange400, green50, amberA400, amberA700, pinkA400} from 'material-ui/styles/colors';
 import SearchBar from 'material-ui-search-bar';
 
 import ReactList from 'react-list';
-
+import {
+  DropdownButton,
+  Panel, PageHeader, ListGroup, ListGroupItem, Button,
+} from 'react-bootstrap';
 
 import CompanyCard from './CompanyCard';
 
@@ -21,7 +24,11 @@ const styles = {
     borderWidth: 0,
     borderBottomWidth: 3,
     borderBottomColor: grey200
-  }
+  },
+  header: {
+    fontFamily: 'Ubuntu',
+    marginTop: -22
+  },
 }
 
 var socket = io();
@@ -109,7 +116,7 @@ class Home extends React.Component {
   };
 
   renderCard = (list, index, key) => {
-    var sublist = list.slice(5*index, 5*index+5);
+    var sublist = list.slice(4*index, 4*index+4);
     return (
       <div className="rowB centering" key={index}>
         {sublist.map((c, i) => 
@@ -125,6 +132,28 @@ class Home extends React.Component {
         )}
       </div>
     );
+  };
+
+  handleLogoClick = () => {
+    this.oc.openDialog(
+      <div>
+        <PageHeader style={styles.header}>Welcome to OfferIQ!</PageHeader>
+        <div>
+          This is a real-time community open only to Harvard students, where you can read and write about experiences or advice in the recruiting process. 
+          You'll also be able to view salary statistics, and keep track of the companies you're interested in. It's like a Q-Guide for companies.
+          <br />
+          <br />
+          Please submit bugs or new company requests to jessetanzhang@college.harvard.edu.
+        </div>
+      </div>,
+      [
+        <FlatButton
+          label="Got it!"
+          primary={true}
+          onClick={this.oc.closeDialog}
+        />
+      ]
+    )
   };
 
   componentDidMount() {
@@ -146,7 +175,6 @@ class Home extends React.Component {
     // });
 
     //FIREBASE IMPLEMENTATION
-
     firebase.database().ref('companies/').on('value', (snapshot) => {
       if(snapshot.val()) {
         this.setState({
@@ -200,12 +228,19 @@ class Home extends React.Component {
       <div style={{fontFamily: 'Oxygen'}}>
         <div style={styles.bar} className="rowRL">
           <div className="rowC">
-            <div style={{marginLeft: 16, marginRight: -40}}>
+            <div style={{marginLeft: 16, marginRight: 16}}>
               {this.state.loggedIn ?
-                <img src="/logo2.png" height={75} />
+                <div onTouchTap={this.handleLogoClick} style={{cursor: 'pointer'}}>
+                  <img src="/logo.png" height={35} style={{marginTop: 15}}/>
+                </div>
               :
                 <div onTouchTap={this.signInGoogle} style={{cursor: 'pointer'}}>
-                  <img src="/logo1.png" height={75} />
+                  <Badge
+                    badgeContent={<FontIcon className="material-icons" color={white}>person</FontIcon>}
+                    badgeStyle={{top: 12, right: 12, backgroundColor: pinkA400, fontSize: 12}}
+                  >
+                    <img src="/logo.png" height={35} style={{marginTop: -5}}/>
+                  </Badge>
                 </div>
               }
             </div>
