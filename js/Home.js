@@ -30,7 +30,7 @@ class Home extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      companies: [],
+      companies: {},
       userCompanies: {},
       searchQuery: '',
       dialogOpen: false,
@@ -84,8 +84,8 @@ class Home extends React.Component {
 
   filterCompanies = () => {
     var filteredList = [];
-    for(var i=0; i<this.state.companies.length; i++) {
-      var company = Object.assign({},this.state.companies[i], {oc: this.oc});
+    for(var key in this.state.companies) {
+      var company = Object.assign({},this.state.companies[key], {companyid: key});
       if((!this.state.searchQuery || company.name.toLowerCase().includes(this.state.searchQuery.toLowerCase())) 
           && (!this.state.ownFilter || (!this.state.userCompanies || (company.companyid in this.state.userCompanies && this.state.userCompanies[company.companyid].bookmarked)))
           && (this.state.sectorFilter !== 'tech' || company.sectorName == 'Information Technology')
@@ -118,18 +118,19 @@ class Home extends React.Component {
                     name={c.name} 
                     companyid={c.companyid} 
                     squareLogo={c.squareLogo} 
-                    oc={c.oc} 
+                    oc={this.oc} 
                     c={Object.assign({},c)}
+                    userc={Object.assign({},this.state.userCompanies[c.companyid] || {})}
                     bookmarked={c.companyid in this.state.userCompanies && this.state.userCompanies[c.companyid].bookmarked}/>}
         )}
       </div>
     );
-    // var c = list[index];
-    // return <CompanyCard key={c.name} name={c.name} companyid={c.companyid} squareLogo={c.squareLogo} oc={c.oc}/>;
   };
 
   componentDidMount() {
-    var db = firebase.firestore();
+    //FIRESTORE IMPLEMENTATION 
+
+    // var db = firebase.firestore();
     // $.getJSON("/companiesExtra.json", function(json) {
     //   var companies = json.companies;
     //   for(var i = 0; i<companies.length; i++) {
@@ -137,11 +138,21 @@ class Home extends React.Component {
     //     db.collection("companies").add(doc);
     //   }
     // });
-    console.log("mounted")
-    db.collection("companies").onSnapshot((querySnapshot) => {
-      this.setState({
-        companies: querySnapshot.docs.map((doc) => {return Object.assign({companyid: doc.id}, doc.data())})
-      });
+    // console.log("mounted")
+    // db.collection("companies").onSnapshot((querySnapshot) => {
+    //   this.setState({
+    //     companies: querySnapshot.docs.map((doc) => {return Object.assign({companyid: doc.id}, doc.data())})
+    //   });
+    // });
+
+    //FIREBASE IMPLEMENTATION
+
+    firebase.database().ref('companies/').on('value', (snapshot) => {
+      if(snapshot.val()) {
+        this.setState({
+          companies: snapshot.val()
+        });
+      }
     });
 
     firebase.auth().onAuthStateChanged((user) => {
@@ -149,15 +160,22 @@ class Home extends React.Component {
         this.setState({
           loggedIn: true
         });
-        db.collection("users").doc(user.uid).collection("userCompanies").onSnapshot((querySnapshot) => {
-          var userCompanies = {};
-          for(var i=0; i<querySnapshot.docs.length; i++) {
-            var doc = querySnapshot.docs[i];
-            userCompanies[doc.id] = doc.data();
+        // db.collection("users").doc(user.uid).collection("userCompanies").onSnapshot((querySnapshot) => {
+        //   var userCompanies = {};
+        //   for(var i=0; i<querySnapshot.docs.length; i++) {
+        //     var doc = querySnapshot.docs[i];
+        //     userCompanies[doc.id] = doc.data();
+        //   }
+        //   this.setState({
+        //     userCompanies: userCompanies
+        //   });
+        // });
+        firebase.database().ref('users/'+user.uid+"/userCompanies/").on('value', (snapshot) => {
+          if(snapshot.val()) {
+            this.setState({
+              userCompanies: snapshot.val()
+            });
           }
-          this.setState({
-            userCompanies: userCompanies
-          });
         });
       } else {
         this.setState({
@@ -182,7 +200,7 @@ class Home extends React.Component {
       <div style={{fontFamily: 'Oxygen'}}>
         <div style={styles.bar} className="rowRL">
           <div className="rowC">
-            <div style={{marginLeft: 16}}>
+            <div style={{marginLeft: 16, marginRight: -40}}>
               {this.state.loggedIn ?
                 <img src="/logo2.png" height={75} />
               :
@@ -197,10 +215,10 @@ class Home extends React.Component {
               <i className="material-icons" color={grey400} style={{fontSize: 40, margin: 16, color: grey400}}>search</i> 
             }
             <TextField
-              hintText={'Search for places'  + " (" + this.state.companies.length + " total)"}
+              hintText={'Search for places'  + " (" + Object.keys(this.state.companies).length + " total)"}
               value={this.state.searchQuery}
               underlineStyle={{display: 'none'}}
-              style={{fontSize: 20, marginTop: 10, width: 400}}
+              style={{fontSize: 20, marginTop: 10, width: 300}}
               onChange={(event, value) => {this.setState({searchQuery: value})}}
             />
           </div>
@@ -281,7 +299,7 @@ class Home extends React.Component {
           </div>
         </div>
         <div style={{height: $(window).height() - 75, overflow: "auto"}}>
-          {this.state.companies.length > 0 ?
+          {Object.keys(this.state.companies).length > 0 ?
             <div className="centering" style={{width: $(window).width()}}>
               <ReactList
                 itemRenderer={this.renderCard.bind(null, filteredList)}

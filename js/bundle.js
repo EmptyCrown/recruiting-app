@@ -12942,6 +12942,7 @@ var CompanyProfile = function (_React$Component) {
                   ),
                   this.state.company.featuredReview && this.state.company.featuredReview.pros,
                   _react2.default.createElement('br', null),
+                  _react2.default.createElement('br', null),
                   _react2.default.createElement(
                     'span',
                     { style: { color: _colors.red400 } },
@@ -13034,7 +13035,7 @@ var CompanyProfile = function (_React$Component) {
                   _react2.default.createElement(
                     'span',
                     null,
-                    'Offers '
+                    'Salaries '
                   ),
                   _react2.default.createElement(
                     'span',
@@ -13140,7 +13141,7 @@ var _initialiseProps = function _initialiseProps() {
   var _this3 = this;
 
   this.getCompany = function (props) {
-    var db = firebase.firestore();
+    // var db = firebase.firestore();
     // db.collection("companies").doc(props.companyid).get().then((doc) => {
     //   if(doc.exists) {
     //     var company = doc.data();
@@ -13150,29 +13151,24 @@ var _initialiseProps = function _initialiseProps() {
     //   }
     // });
     _this3.setState({
-      company: props.c
+      company: props.c,
+      userCompany: props.userc
     });
 
-    var user = firebase.auth().currentUser;
-    if (user && user.uid) {
-      db.collection("users").doc(user.uid).collection("userCompanies").doc(_this3.props.companyid).get().then(function (doc) {
-        if (doc.exists) {
-          _this3.setState({
-            userCompany: doc.data()
-          });
-        } else {
-          _this3.setState({
-            userCompany: {}
-          });
-        }
-      });
-    }
-  };
-
-  this.editCompany = function (field, value) {
-    _this3.setState({
-      company: Object.assign(_this3.state.company, _defineProperty({}, field, value))
-    });
+    // var user = firebase.auth().currentUser;
+    // if(user && user.uid) {
+    //   db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).get().then((doc) => {
+    //     if(doc.exists) {
+    //       this.setState({
+    //         userCompany: doc.data()
+    //       });
+    //     } else {
+    //       this.setState({
+    //         userCompany: {}
+    //       });
+    //     }
+    //   });
+    // }
   };
 
   this.editStateObject = function (object, field, value) {
@@ -13186,7 +13182,8 @@ var _initialiseProps = function _initialiseProps() {
       var db = firebase.firestore();
       var user = firebase.auth().currentUser;
       if (user && user.uid) {
-        db.collection("users").doc(user.uid).collection("userCompanies").doc(_this3.props.companyid).set(_this3.state.userCompany);
+        //db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).set(this.state.userCompany);
+        firebase.database().ref('users/' + user.uid + "/userCompanies/").update(_defineProperty({}, _this3.props.companyid, _this3.state.userCompany));
       }
     });
   };
@@ -13254,8 +13251,9 @@ var _initialiseProps = function _initialiseProps() {
             newContact: {}
           });
           //write to firestore
-          var db = firebase.firestore();
-          db.collection("companies").doc(_this3.props.companyid).update(_this3.state.company);
+          // var db = firebase.firestore();
+          // db.collection("companies").doc(this.props.companyid).update(this.state.company);
+          firebase.database().ref("companies/").update(_defineProperty({}, _this3.props.companyid, _this3.state.company));
           _this3.props.oc.closeDialog();
         } else {
           _this3.props.oc.openSnackbar('Please fill out all required fields');
@@ -13294,9 +13292,11 @@ var _initialiseProps = function _initialiseProps() {
             company: company,
             newXp: { medium: "OCS/Crimson Careers" }
           }, function () {
+            console.log(_this3.state.company);
             //write to firestore
-            var db = firebase.firestore();
-            db.collection("companies").doc(_this3.props.companyid).update(_this3.state.company);
+            // var db = firebase.firestore();
+            // db.collection("companies").doc(this.props.companyid).update(this.state.company);
+            firebase.database().ref("companies/").update(_defineProperty({}, _this3.props.companyid, _this3.state.company));
           });
           _this3.props.oc.closeDialog();
         } else {
@@ -13386,8 +13386,10 @@ var _initialiseProps = function _initialiseProps() {
             newOffer: {}
           });
           //write to firestore
-          var db = firebase.firestore();
-          db.collection("companies").doc(_this3.props.companyid).update(_this3.state.company);
+          // var db = firebase.firestore();
+          // db.collection("companies").doc(this.props.companyid).update(this.state.company);
+          console.log(_this3.state.company);
+          firebase.database().ref("companies/").update(_defineProperty({}, _this3.props.companyid, _this3.state.company));
           _this3.props.oc.closeDialog();
         } else {
           _this3.props.oc.openSnackbar('Please fill out all fields');
@@ -54300,8 +54302,8 @@ var Home = function (_React$Component) {
 
     _this.filterCompanies = function () {
       var filteredList = [];
-      for (var i = 0; i < _this.state.companies.length; i++) {
-        var company = Object.assign({}, _this.state.companies[i], { oc: _this.oc });
+      for (var key in _this.state.companies) {
+        var company = Object.assign({}, _this.state.companies[key], { companyid: key });
         if ((!_this.state.searchQuery || company.name.toLowerCase().includes(_this.state.searchQuery.toLowerCase())) && (!_this.state.ownFilter || !_this.state.userCompanies || company.companyid in _this.state.userCompanies && _this.state.userCompanies[company.companyid].bookmarked) && (_this.state.sectorFilter !== 'tech' || company.sectorName == 'Information Technology') && (_this.state.sectorFilter !== 'finance' || company.sectorName == 'Finance') && (_this.state.sectorFilter !== 'consulting' || company.sectorName == 'Business Services')) {
           filteredList.push(company);
         }
@@ -54331,17 +54333,16 @@ var Home = function (_React$Component) {
             name: c.name,
             companyid: c.companyid,
             squareLogo: c.squareLogo,
-            oc: c.oc,
+            oc: _this.oc,
             c: Object.assign({}, c),
+            userc: Object.assign({}, _this.state.userCompanies[c.companyid] || {}),
             bookmarked: c.companyid in _this.state.userCompanies && _this.state.userCompanies[c.companyid].bookmarked });
         })
       );
-      // var c = list[index];
-      // return <CompanyCard key={c.name} name={c.name} companyid={c.companyid} squareLogo={c.squareLogo} oc={c.oc}/>;
     };
 
     _this.state = {
-      companies: [],
+      companies: {},
       userCompanies: {},
       searchQuery: '',
       dialogOpen: false,
@@ -54371,7 +54372,9 @@ var Home = function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      var db = firebase.firestore();
+      //FIRESTORE IMPLEMENTATION 
+
+      // var db = firebase.firestore();
       // $.getJSON("/companiesExtra.json", function(json) {
       //   var companies = json.companies;
       //   for(var i = 0; i<companies.length; i++) {
@@ -54379,13 +54382,21 @@ var Home = function (_React$Component) {
       //     db.collection("companies").add(doc);
       //   }
       // });
-      console.log("mounted");
-      db.collection("companies").onSnapshot(function (querySnapshot) {
-        _this2.setState({
-          companies: querySnapshot.docs.map(function (doc) {
-            return Object.assign({ companyid: doc.id }, doc.data());
-          })
-        });
+      // console.log("mounted")
+      // db.collection("companies").onSnapshot((querySnapshot) => {
+      //   this.setState({
+      //     companies: querySnapshot.docs.map((doc) => {return Object.assign({companyid: doc.id}, doc.data())})
+      //   });
+      // });
+
+      //FIREBASE IMPLEMENTATION
+
+      firebase.database().ref('companies/').on('value', function (snapshot) {
+        if (snapshot.val()) {
+          _this2.setState({
+            companies: snapshot.val()
+          });
+        }
       });
 
       firebase.auth().onAuthStateChanged(function (user) {
@@ -54393,15 +54404,22 @@ var Home = function (_React$Component) {
           _this2.setState({
             loggedIn: true
           });
-          db.collection("users").doc(user.uid).collection("userCompanies").onSnapshot(function (querySnapshot) {
-            var userCompanies = {};
-            for (var i = 0; i < querySnapshot.docs.length; i++) {
-              var doc = querySnapshot.docs[i];
-              userCompanies[doc.id] = doc.data();
+          // db.collection("users").doc(user.uid).collection("userCompanies").onSnapshot((querySnapshot) => {
+          //   var userCompanies = {};
+          //   for(var i=0; i<querySnapshot.docs.length; i++) {
+          //     var doc = querySnapshot.docs[i];
+          //     userCompanies[doc.id] = doc.data();
+          //   }
+          //   this.setState({
+          //     userCompanies: userCompanies
+          //   });
+          // });
+          firebase.database().ref('users/' + user.uid + "/userCompanies/").on('value', function (snapshot) {
+            if (snapshot.val()) {
+              _this2.setState({
+                userCompanies: snapshot.val()
+              });
             }
-            _this2.setState({
-              userCompanies: userCompanies
-            });
           });
         } else {
           _this2.setState({
@@ -54435,7 +54453,7 @@ var Home = function (_React$Component) {
             { className: 'rowC' },
             _react2.default.createElement(
               'div',
-              { style: { marginLeft: 16 } },
+              { style: { marginLeft: 16, marginRight: -40 } },
               this.state.loggedIn ? _react2.default.createElement('img', { src: '/logo2.png', height: 75 }) : _react2.default.createElement(
                 'div',
                 { onTouchTap: this.signInGoogle, style: { cursor: 'pointer' } },
@@ -54454,10 +54472,10 @@ var Home = function (_React$Component) {
               'search'
             ),
             _react2.default.createElement(_materialUi.TextField, {
-              hintText: 'Search for places' + " (" + this.state.companies.length + " total)",
+              hintText: 'Search for places' + " (" + Object.keys(this.state.companies).length + " total)",
               value: this.state.searchQuery,
               underlineStyle: { display: 'none' },
-              style: { fontSize: 20, marginTop: 10, width: 400 },
+              style: { fontSize: 20, marginTop: 10, width: 300 },
               onChange: function onChange(event, value) {
                 _this3.setState({ searchQuery: value });
               }
@@ -54580,7 +54598,7 @@ var Home = function (_React$Component) {
         _react2.default.createElement(
           'div',
           { style: { height: $(window).height() - 75, overflow: "auto" } },
-          this.state.companies.length > 0 ? _react2.default.createElement(
+          Object.keys(this.state.companies).length > 0 ? _react2.default.createElement(
             'div',
             { className: 'centering', style: { width: $(window).width() } },
             _react2.default.createElement(_reactList2.default, {
@@ -82228,7 +82246,7 @@ var CompanyCard = function (_React$Component) {
         _materialUi.Card,
         {
           onTouchTap: function onTouchTap() {
-            _this2.props.oc.openDrawer(_react2.default.createElement(_CompanyProfile2.default, { oc: _this2.props.oc, c: _this2.props.c, companyid: _this2.props.companyid }));
+            _this2.props.oc.openDrawer(_react2.default.createElement(_CompanyProfile2.default, { oc: _this2.props.oc, c: _this2.props.c, userc: _this2.props.userc, companyid: _this2.props.companyid }));
           },
           style: { margin: 10, height: 230, width: 230, fontFamily: 'Raleway', backgroundColor: 'white', cursor: 'pointer', padding: 16 }
         },

@@ -42,7 +42,7 @@ class CompanyCard extends React.Component {
       <Card 
         onTouchTap={
           () => {this.props.oc.openDrawer(
-            <CompanyProfile oc={this.props.oc} c={this.props.c} companyid={this.props.companyid}/>
+            <CompanyProfile oc={this.props.oc} c={this.props.c} userc={this.props.userc} companyid={this.props.companyid}/>
           )}
         }
         style={{margin:10, height: 230, width: 230, fontFamily: 'Raleway', backgroundColor: 'white', cursor: 'pointer', padding: 16}}

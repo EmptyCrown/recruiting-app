@@ -64,7 +64,7 @@ export default class CompanyProfile extends React.Component {
   }
 
   getCompany = (props) => {
-    var db = firebase.firestore();
+    // var db = firebase.firestore();
     // db.collection("companies").doc(props.companyid).get().then((doc) => {
     //   if(doc.exists) {
     //     var company = doc.data();
@@ -74,29 +74,24 @@ export default class CompanyProfile extends React.Component {
     //   }
     // });
     this.setState({
-      company: props.c
+      company: props.c,
+      userCompany: props.userc
     });
 
-    var user = firebase.auth().currentUser;
-    if(user && user.uid) {
-      db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).get().then((doc) => {
-        if(doc.exists) {
-          this.setState({
-            userCompany: doc.data()
-          });
-        } else {
-          this.setState({
-            userCompany: {}
-          });
-        }
-      });
-    }
-  };
-
-  editCompany = (field, value) => {
-    this.setState({
-      company: Object.assign(this.state.company, {[field]: value})
-    })
+    // var user = firebase.auth().currentUser;
+    // if(user && user.uid) {
+    //   db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).get().then((doc) => {
+    //     if(doc.exists) {
+    //       this.setState({
+    //         userCompany: doc.data()
+    //       });
+    //     } else {
+    //       this.setState({
+    //         userCompany: {}
+    //       });
+    //     }
+    //   });
+    // }
   };
 
   editStateObject = (object, field, value) => {
@@ -112,7 +107,10 @@ export default class CompanyProfile extends React.Component {
       var db = firebase.firestore();
       var user = firebase.auth().currentUser;
       if(user && user.uid) {
-        db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).set(this.state.userCompany);
+        //db.collection("users").doc(user.uid).collection("userCompanies").doc(this.props.companyid).set(this.state.userCompany);
+        firebase.database().ref('users/'+user.uid+"/userCompanies/").update({
+          [this.props.companyid]: this.state.userCompany
+        });
       }
     })
   };
@@ -166,8 +164,11 @@ export default class CompanyProfile extends React.Component {
                 newContact: {}
               });
               //write to firestore
-              var db = firebase.firestore();
-              db.collection("companies").doc(this.props.companyid).update(this.state.company);
+              // var db = firebase.firestore();
+              // db.collection("companies").doc(this.props.companyid).update(this.state.company);
+              firebase.database().ref("companies/").update({
+                [this.props.companyid]: this.state.company
+              });
               this.props.oc.closeDialog();
             } else {
               this.props.oc.openSnackbar('Please fill out all required fields');
@@ -207,9 +208,13 @@ export default class CompanyProfile extends React.Component {
                 company: company,
                 newXp: {medium: "OCS/Crimson Careers"}
               }, () => {
+                console.log(this.state.company)
                 //write to firestore
-                var db = firebase.firestore();
-                db.collection("companies").doc(this.props.companyid).update(this.state.company);
+                // var db = firebase.firestore();
+                // db.collection("companies").doc(this.props.companyid).update(this.state.company);
+                firebase.database().ref("companies/").update({
+                  [this.props.companyid]: this.state.company
+                });
               });
               this.props.oc.closeDialog();
             } else {
@@ -283,8 +288,12 @@ export default class CompanyProfile extends React.Component {
                 newOffer: {}
               });
               //write to firestore
-              var db = firebase.firestore();
-              db.collection("companies").doc(this.props.companyid).update(this.state.company);
+              // var db = firebase.firestore();
+              // db.collection("companies").doc(this.props.companyid).update(this.state.company);
+              console.log(this.state.company)
+              firebase.database().ref("companies/").update({
+                [this.props.companyid]: this.state.company
+              });
               this.props.oc.closeDialog();
             } else {
               this.props.oc.openSnackbar('Please fill out all fields');
@@ -401,7 +410,7 @@ export default class CompanyProfile extends React.Component {
                   <p>
                     <span style={{color: green400}}>Pros: </span>
                     {this.state.company.featuredReview && this.state.company.featuredReview.pros}
-                    <br />
+                    <br /><br/>
                     <span style={{color: red400}}>Cons: </span>
                     {this.state.company.featuredReview && this.state.company.featuredReview.cons}
                   </p>
@@ -443,7 +452,7 @@ export default class CompanyProfile extends React.Component {
               </div>
               <PageHeader style={styles.header}>
                 <span className="rowRL">
-                  <span>Offers </span>
+                  <span>Salaries </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
                     <i className="material-icons rotating-button red" onTouchTap={firebase.auth().currentUser ? this.handleAddOffer : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
                   </span>
