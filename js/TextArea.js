@@ -40,13 +40,16 @@ class TextArea extends React.Component {
 
   render() {
     return (
-      this.state.expanded ?
+      (this.state.expanded || this.props.text.length < 600) ?
         <div>
           {this.props.children}
         </div>
       :
-        <div className="overflow" style={{cursor: 'pointer'}} onTouchTap={() => this.setState({expanded: true})}>
-          {this.props.children}
+        <div style={{cursor: 'pointer'}} onTouchTap={() => this.setState({expanded: true})}>
+          <div className="overflow">
+            {this.props.children}
+          </div>
+          <FontIcon className="material-icons" color={grey500}>more_horiz</FontIcon>
         </div>
     );
   }

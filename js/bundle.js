@@ -13984,7 +13984,7 @@ var CompanyProfile = function (_React$Component) {
                   null,
                   _react2.default.createElement(
                     _TextArea2.default,
-                    { key: this.props.companyid + "pro" },
+                    { key: this.props.companyid + "pro", text: this.state.company.featuredReview ? this.state.company.featuredReview.pros : "" },
                     _react2.default.createElement(
                       'p',
                       null,
@@ -13999,7 +13999,7 @@ var CompanyProfile = function (_React$Component) {
                   _react2.default.createElement('br', null),
                   _react2.default.createElement(
                     _TextArea2.default,
-                    { key: this.props.companyid + "con" },
+                    { key: this.props.companyid + "con", text: this.state.company.featuredReview ? this.state.company.featuredReview.cons : "" },
                     _react2.default.createElement(
                       'p',
                       null,
@@ -95693,16 +95693,25 @@ var TextArea = function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      return this.state.expanded ? _react2.default.createElement(
+      return this.state.expanded || this.props.text.length < 600 ? _react2.default.createElement(
         'div',
         null,
         this.props.children
       ) : _react2.default.createElement(
         'div',
-        { className: 'overflow', style: { cursor: 'pointer' }, onTouchTap: function onTouchTap() {
+        { style: { cursor: 'pointer' }, onTouchTap: function onTouchTap() {
             return _this2.setState({ expanded: true });
           } },
-        this.props.children
+        _react2.default.createElement(
+          'div',
+          { className: 'overflow' },
+          this.props.children
+        ),
+        _react2.default.createElement(
+          _materialUi.FontIcon,
+          { className: 'material-icons', color: _colors.grey500 },
+          'more_horiz'
+        )
       );
     }
   }]);

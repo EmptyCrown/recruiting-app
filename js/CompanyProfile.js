@@ -409,14 +409,14 @@ export default class CompanyProfile extends React.Component {
               <div style={{minHeight: 120}}>
                 {this.state.company.general ||
                   <div>
-                    <TextArea key={this.props.companyid+"pro"}>
+                    <TextArea key={this.props.companyid+"pro"} text={this.state.company.featuredReview ? this.state.company.featuredReview.pros : ""}>
                       <p>
                         <span style={{color: green400}}>Pros: </span>
                         {this.state.company.featuredReview && this.state.company.featuredReview.pros}
                       </p>
                     </TextArea>
                     <br />
-                    <TextArea key={this.props.companyid+"con"}>
+                    <TextArea key={this.props.companyid+"con"} text={this.state.company.featuredReview ? this.state.company.featuredReview.cons : ""}>
                       <p>
                         <span style={{color: red400}}>Cons: </span>
                         {this.state.company.featuredReview && this.state.company.featuredReview.cons}
