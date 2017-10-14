@@ -43,7 +43,8 @@ class Home extends React.Component {
       dialogOpen: false,
       drawerOpen: false,
       snackbarOpen: false,
-      usersOnline: 1
+      usersOnline: 1,
+      seenInstructions: true
     };
     this.oc = {
       openDialog: ((jsx, actions) => {this.setState({dialogOpen: true, dialogJSX: jsx, dialogActions: actions})}),
@@ -135,12 +136,18 @@ class Home extends React.Component {
   };
 
   handleLogoClick = () => {
+    var user = firebase.auth().currentUser;
+    firebase.database().ref('users/'+user.uid).update({seenInstructions: true});
     this.oc.openDialog(
       <div>
         <PageHeader style={styles.header}>Welcome to OfferIQ!</PageHeader>
         <div>
           This is a real-time community open only to Harvard students, where you can read and write about experiences or advice in the recruiting process. 
           You'll also be able to view salary statistics, and keep track of the companies you're interested in. It's like a Q-Guide for companies.
+          <br />
+          <br />
+          <strong>How is this different from Glassdoor?</strong> <br/>
+          We're hoping this will lead to quality information being shared that is more relevant to you as. Harvard student, and more personal advice. You'll be able to discuss questions you have with fellow students.
           <br />
           <br />
           Please submit bugs or new company requests to jessetanzhang@college.harvard.edu.
@@ -198,10 +205,11 @@ class Home extends React.Component {
         //     userCompanies: userCompanies
         //   });
         // });
-        firebase.database().ref('users/'+user.uid+"/userCompanies/").on('value', (snapshot) => {
+        firebase.database().ref('users/'+user.uid).on('value', (snapshot) => {
           if(snapshot.val()) {
             this.setState({
-              userCompanies: snapshot.val()
+              userCompanies: snapshot.val().userCompanies || {},
+              seenInstructions: snapshot.val().seenInstructions
             });
           }
         });
@@ -230,14 +238,25 @@ class Home extends React.Component {
           <div className="rowC">
             <div style={{marginLeft: 16, marginRight: 16}}>
               {this.state.loggedIn ?
-                <div onTouchTap={this.handleLogoClick} style={{cursor: 'pointer'}}>
-                  <img src="/logo.png" height={35} style={{marginTop: 15}}/>
-                </div>
+                (this.state.seenInstructions ?
+                  <div onTouchTap={this.handleLogoClick} style={{cursor: 'pointer'}}>
+                    <img src="/logo.png" height={35} style={{marginTop: 15}}/>
+                  </div>
+                :
+                  <div onTouchTap={this.handleLogoClick} style={{cursor: 'pointer'}}>
+                    <Badge
+                      badgeContent={<FontIcon className="material-icons" color={white}>notifications</FontIcon>}
+                      badgeStyle={{top: 12, right: 12, backgroundColor: pinkA400, fontSize: 8}}
+                    >
+                      <img src="/logo.png" height={35} style={{marginTop: -5}}/>
+                    </Badge>
+                  </div>
+                )
               :
                 <div onTouchTap={this.signInGoogle} style={{cursor: 'pointer'}}>
                   <Badge
                     badgeContent={<FontIcon className="material-icons" color={white}>person</FontIcon>}
-                    badgeStyle={{top: 12, right: 12, backgroundColor: pinkA400, fontSize: 12}}
+                    badgeStyle={{top: 12, right: 12, backgroundColor: pinkA400, fontSize: 8}}
                   >
                     <img src="/logo.png" height={35} style={{marginTop: -5}}/>
                   </Badge>

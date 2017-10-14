@@ -220,3 +220,19 @@ i.rotating-button.disable-rotation:hover {
     opacity: 1;
     transition: opacity 1s;
 }
+
+.overflow {
+	overflow: hidden;
+	line-height: 25px;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+}
+
+
+.fade {
+	height: 15px;
+	width: 100%;
+	background-color: white;
+	color: #9E9E9E;
+}

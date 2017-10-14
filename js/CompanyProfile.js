@@ -17,6 +17,7 @@ import PrivateIcon from 'material-ui/svg-icons/action/account-circle';
 import StarIcon from 'material-ui/svg-icons/toggle/star';
 
 import OfferTable from './OfferTable';
+import TextArea from './TextArea';
 import ExperienceCard from './ExperienceCard';
 import AddXp from './AddXp';
 
@@ -407,13 +408,21 @@ export default class CompanyProfile extends React.Component {
               </PageHeader>
               <div style={{minHeight: 120}}>
                 {this.state.company.general ||
-                  <p>
-                    <span style={{color: green400}}>Pros: </span>
-                    {this.state.company.featuredReview && this.state.company.featuredReview.pros}
-                    <br /><br/>
-                    <span style={{color: red400}}>Cons: </span>
-                    {this.state.company.featuredReview && this.state.company.featuredReview.cons}
-                  </p>
+                  <div>
+                    <TextArea key={this.props.companyid+"pro"}>
+                      <p>
+                        <span style={{color: green400}}>Pros: </span>
+                        {this.state.company.featuredReview && this.state.company.featuredReview.pros}
+                      </p>
+                    </TextArea>
+                    <br />
+                    <TextArea key={this.props.companyid+"con"}>
+                      <p>
+                        <span style={{color: red400}}>Cons: </span>
+                        {this.state.company.featuredReview && this.state.company.featuredReview.cons}
+                      </p>
+                    </TextArea>
+                  </div>
                 }
               </div>
               <PageHeader style={styles.header}>
