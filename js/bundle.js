@@ -14022,6 +14022,39 @@ var CompanyProfile = function (_React$Component) {
                   _react2.default.createElement(
                     'span',
                     null,
+                    'Experiences & Tips '
+                  ),
+                  _react2.default.createElement(
+                    'span',
+                    { className: 'tooltip-container', style: { marginTop: -20, marginBottom: -10 } },
+                    _react2.default.createElement(
+                      'i',
+                      { className: 'material-icons rotating-button green', onTouchTap: firebase.auth().currentUser ? this.handleAddXp : this.props.oc.openSnackbar.bind(null, "Log in to add content") },
+                      'add'
+                    )
+                  )
+                )
+              ),
+              _react2.default.createElement(
+                'div',
+                { style: { minHeight: 120 } },
+                this.state.company.xp ? this.state.company.xp.map(function (xp, index) {
+                  return _react2.default.createElement(_ExperienceCard2.default, { oc: _this2.props.oc, xp: xp, key: index });
+                }) : _react2.default.createElement(
+                  'div',
+                  null,
+                  'No posts at this time. Add any thoughts you have on working or applying here.'
+                )
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.PageHeader,
+                { style: styles.header },
+                _react2.default.createElement(
+                  'span',
+                  { className: 'rowRL' },
+                  _react2.default.createElement(
+                    'span',
+                    null,
                     'Points of Contact'
                   ),
                   _react2.default.createElement(
@@ -14029,7 +14062,7 @@ var CompanyProfile = function (_React$Component) {
                     { className: 'tooltip-container', style: { marginTop: -20, marginBottom: -10 } },
                     _react2.default.createElement(
                       'i',
-                      { className: 'material-icons rotating-button green', onTouchTap: firebase.auth().currentUser ? this.handleAddContact : this.props.oc.openSnackbar.bind(null, "Log in to add content") },
+                      { className: 'material-icons rotating-button orange', onTouchTap: firebase.auth().currentUser ? this.handleAddContact : this.props.oc.openSnackbar.bind(null, "Log in to add content") },
                       'add'
                     )
                   )
@@ -14054,39 +14087,6 @@ var CompanyProfile = function (_React$Component) {
                     );
                   })
                 ) : "Email addresses of HR, etc."
-              ),
-              _react2.default.createElement(
-                _reactBootstrap.PageHeader,
-                { style: styles.header },
-                _react2.default.createElement(
-                  'span',
-                  { className: 'rowRL' },
-                  _react2.default.createElement(
-                    'span',
-                    null,
-                    'Experiences & Tips '
-                  ),
-                  _react2.default.createElement(
-                    'span',
-                    { className: 'tooltip-container', style: { marginTop: -20, marginBottom: -10 } },
-                    _react2.default.createElement(
-                      'i',
-                      { className: 'material-icons rotating-button orange', onTouchTap: firebase.auth().currentUser ? this.handleAddXp : this.props.oc.openSnackbar.bind(null, "Log in to add content") },
-                      'add'
-                    )
-                  )
-                )
-              ),
-              _react2.default.createElement(
-                'div',
-                { style: { minHeight: 120 } },
-                this.state.company.xp ? this.state.company.xp.map(function (xp, index) {
-                  return _react2.default.createElement(_ExperienceCard2.default, { oc: _this2.props.oc, xp: xp, key: index });
-                }) : _react2.default.createElement(
-                  'div',
-                  null,
-                  'No posts at this time. Add any thoughts you have on working or applying here.'
-                )
               ),
               _react2.default.createElement(
                 _reactBootstrap.PageHeader,

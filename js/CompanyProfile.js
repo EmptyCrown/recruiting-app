@@ -425,28 +425,12 @@ export default class CompanyProfile extends React.Component {
                   </div>
                 }
               </div>
-              <PageHeader style={styles.header}>
-                <span className="rowRL">
-                  <span>Points of Contact</span>
-                  <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button green" onTouchTap={firebase.auth().currentUser ? this.handleAddContact : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
-                  </span>
-                </span>
-              </PageHeader>
-              <div style={{minHeight: 120}}>
-                {(this.state.company.contacts && this.state.company.contacts.length > 0) ?
-                  <div>
-                    {this.state.company.contacts.map((contact, index) => <div key={index}><strong>{contact.name + ": "}</strong>{contact.email}</div>)}
-                  </div>
-                :
-                  "Email addresses of HR, etc."
-                }
-              </div>
+              
               <PageHeader style={styles.header}>
                 <span className="rowRL">
                   <span>Experiences & Tips </span>
                   <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
-                    <i className="material-icons rotating-button orange" onTouchTap={firebase.auth().currentUser ? this.handleAddXp : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
+                    <i className="material-icons rotating-button green" onTouchTap={firebase.auth().currentUser ? this.handleAddXp : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
                   </span>
                 </span>
               </PageHeader>
@@ -457,6 +441,23 @@ export default class CompanyProfile extends React.Component {
                   })
                 :
                   <div>No posts at this time. Add any thoughts you have on working or applying here.</div>
+                }
+              </div>
+              <PageHeader style={styles.header}>
+                <span className="rowRL">
+                  <span>Points of Contact</span>
+                  <span className="tooltip-container" style={{marginTop: -20, marginBottom: -10}}>
+                    <i className="material-icons rotating-button orange" onTouchTap={firebase.auth().currentUser ? this.handleAddContact : this.props.oc.openSnackbar.bind(null,"Log in to add content")}>add</i>
+                  </span>
+                </span>
+              </PageHeader>
+              <div style={{minHeight: 120}}>
+                {(this.state.company.contacts && this.state.company.contacts.length > 0) ?
+                  <div>
+                    {this.state.company.contacts.map((contact, index) => <div key={index}><strong>{contact.name + ": "}</strong>{contact.email}</div>)}
+                  </div>
+                :
+                  "Email addresses of HR, etc."
                 }
               </div>
               <PageHeader style={styles.header}>
