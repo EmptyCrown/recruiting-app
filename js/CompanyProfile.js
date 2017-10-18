@@ -454,7 +454,7 @@ export default class CompanyProfile extends React.Component {
               <div style={{minHeight: 120}}>
                 {(this.state.company.contacts && this.state.company.contacts.length > 0) ?
                   <div>
-                    {this.state.company.contacts.map((contact, index) => <div key={index}><strong>{contact.name + ": "}</strong>{contact.email}</div>)}
+                    {this.state.company.contacts.map((contact, index) => <div key={index}><strong>{contact.name + (contact.title ? (" (" + contact.title + ")") : "") + ": "}</strong>{contact.email}</div>)}
                   </div>
                 :
                   "Email addresses of HR, etc."

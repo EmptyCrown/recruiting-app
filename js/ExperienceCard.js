@@ -40,7 +40,7 @@ class ExperienceCard extends React.Component {
     return (
       <Card style={{marginBottom: 10}}>
         <CardHeader
-          title="Anonymous"
+          title={(!this.props.xp.anonymous && this.props.xp.author) ? this.props.xp.author : "Anonymous"}
           subtitle={this.props.xp.date}
           actAsExpander={true}
           showExpandableButton={true}

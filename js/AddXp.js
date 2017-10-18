@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Paper, CircularProgress, Card, FlatButton, CardHeader, FontIcon,
   RadioButton, RadioButtonGroup, SelectField, TextField, DatePicker,
-  MenuItem
+  MenuItem, Checkbox
 } from 'material-ui';
 import { green700, white, amber600, grey200, red400, red500, red600, blue200, blue400, blue500, deepOrange500, amber400,
           grey500, grey700, darkBlack, green500, yellow500, green400, green600, greenA700, grey400, amberA700,
@@ -118,6 +118,12 @@ class AddXp extends React.Component {
             onChange={(event, value) => {this.props.editStateObject('newXp','advice',value)}}
           /><br />
         </div>
+        <br />
+        <Checkbox
+          label="Make this post anonymous"
+          onCheck={(event, isInputChecked) => {this.props.editStateObject('newXp', 'anonymous', isInputChecked)}}
+          style={styles.checkbox}
+        />
       </div>
     );
   }
