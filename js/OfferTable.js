@@ -36,16 +36,16 @@ class OfferTable extends React.Component {
           data={this.props.data}
           columns={[
             {
-              Header: "Date",
-              accessor: "date"
-            },
-            {
               Header: "Type",
               accessor: "type"
             },
             {
-              Header: "Salary",
+              Header: "Salary (month)",
               accessor: "salary"
+            },
+            {
+              Header: "Stock/Stipend (month)",
+              accessor: "stock"
             },
             {
               Header: "Bonus",

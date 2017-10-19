@@ -104,8 +104,8 @@ class Home extends React.Component {
     }
 
     filteredList.sort((a,b) => {
-      let al = a.xp ? a.xp.length : 0;
-      let bl = b.xp ? b.xp.length : 0;
+      let al = 40*(a.xp ? a.xp.length : 0) + (a.offers ? a.offers.length : 0) + (a.contacts ? 15 : 0);
+      let bl = 40*(b.xp ? b.xp.length : 0) + (b.offers ? b.offers.length : 0) + (b.contacts ? 15 : 0);
       if(al == bl) {
         return (b.numberOfRatings || 0) - (a.numberOfRatings || 0);
       } else {

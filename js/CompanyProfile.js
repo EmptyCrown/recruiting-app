@@ -116,6 +116,18 @@ export default class CompanyProfile extends React.Component {
     })
   };
 
+  getOfferData = () => {
+    if(this.state.company.offers) {
+      var offers = this.state.company.offers.slice();
+      for(var i=0; i<offers.length; i++) {
+        var offer = offers[i];
+        offer.date = new Date(offer.date);
+      }
+      return offers;
+    }
+    return [];
+  };
+
   handleAddContact = () => {
     this.props.oc.openDialog(
       <div>
@@ -244,11 +256,16 @@ export default class CompanyProfile extends React.Component {
             />
           </RadioButtonGroup>
         </div>
+        <TextField
+          floatingLabelText="Monthly Salary"
+          fullWidth={true}
+          onChange={(event, value) => {this.setState({newOffer: Object.assign(this.state.newOffer, {salary: value})})}}
+        /><br />
         <div className="centering">
           <TextField
-            floatingLabelText="Salary"
+            floatingLabelText="Monthly Stock/Stipend"
             fullWidth={true}
-            onChange={(event, value) => {this.setState({newOffer: Object.assign(this.state.newOffer, {salary: value})})}}
+            onChange={(event, value) => {this.setState({newOffer: Object.assign(this.state.newOffer, {stock: value})})}}
           /><br />
           <TextField
             floatingLabelText="Bonus(es)"
@@ -360,7 +377,7 @@ export default class CompanyProfile extends React.Component {
       <div>
         <ListItem
           primaryText={this.state.company.name || "None"}
-          secondaryText={<span>{(this.state.company.sectorName || "Miscellaneous")}<span style={{color: green400}}>{this.state.userCompany.status && (" | " + this.state.userCompany.status)}</span></span>}
+          secondaryText={<span>{(this.state.company.sectorName || "Miscellaneous")}<span style={{color: green400}}>{this.state.userCompany.status ? (" | " + this.state.userCompany.status) : ""}</span></span>}
           disabled={true}
           style={{backgroundColor: grey700, color: white}}
           leftIcon={
@@ -469,13 +486,16 @@ export default class CompanyProfile extends React.Component {
                 </span>
               </PageHeader>
               <div style={{minHeight: 120}}>
-                <div>Salary data from fellow students</div><br/>
-                <OfferTable data={this.state.company.offers || []} />
+                <div>Salary data from fellow students - Most recent entries shown first</div><br/>
+                <OfferTable data={this.getOfferData()} />
               </div>
             </div>
           </Tab>
           <Tab label="My Details" value="b" icon={<PrivateIcon/>} >
             <div style={{paddingLeft: '16px', paddingRight: '16px', height: $(window).height() - 141, overflow: 'auto'}} ref='prof'>
+              <PageHeader style={styles.header}>
+                My Application Here
+              </PageHeader>
               <SelectField
                 floatingLabelText="Application Status"
                 onChange={(event, index, value) => {this.updateUserCompany("status", value)}}

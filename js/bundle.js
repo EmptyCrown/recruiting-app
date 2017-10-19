@@ -53335,8 +53335,8 @@ var Home = function (_React$Component) {
       }
 
       filteredList.sort(function (a, b) {
-        var al = a.xp ? a.xp.length : 0;
-        var bl = b.xp ? b.xp.length : 0;
+        var al = 40 * (a.xp ? a.xp.length : 0) + (a.offers ? a.offers.length : 0) + (a.contacts ? 15 : 0);
+        var bl = 40 * (b.xp ? b.xp.length : 0) + (b.offers ? b.offers.length : 0) + (b.contacts ? 15 : 0);
         if (al == bl) {
           return (b.numberOfRatings || 0) - (a.numberOfRatings || 0);
         } else {
@@ -91885,7 +91885,7 @@ var CompanyProfile = function (_React$Component) {
             _react2.default.createElement(
               'span',
               { style: { color: _colors.green400 } },
-              this.state.userCompany.status && " | " + this.state.userCompany.status
+              this.state.userCompany.status ? " | " + this.state.userCompany.status : ""
             )
           ),
           disabled: true,
@@ -92108,10 +92108,10 @@ var CompanyProfile = function (_React$Component) {
                 _react2.default.createElement(
                   'div',
                   null,
-                  'Salary data from fellow students'
+                  'Salary data from fellow students - Most recent entries shown first'
                 ),
                 _react2.default.createElement('br', null),
-                _react2.default.createElement(_OfferTable2.default, { data: this.state.company.offers || [] })
+                _react2.default.createElement(_OfferTable2.default, { data: this.getOfferData() })
               )
             )
           ),
@@ -92121,6 +92121,11 @@ var CompanyProfile = function (_React$Component) {
             _react2.default.createElement(
               'div',
               { style: { paddingLeft: '16px', paddingRight: '16px', height: $(window).height() - 141, overflow: 'auto' }, ref: 'prof' },
+              _react2.default.createElement(
+                _reactBootstrap.PageHeader,
+                { style: styles.header },
+                'My Application Here'
+              ),
               _react2.default.createElement(
                 _materialUi.SelectField,
                 {
@@ -92240,6 +92245,18 @@ var _initialiseProps = function _initialiseProps() {
         firebase.database().ref('users/' + user.uid + "/userCompanies/").update(_defineProperty({}, _this3.props.companyid, _this3.state.userCompany));
       }
     });
+  };
+
+  this.getOfferData = function () {
+    if (_this3.state.company.offers) {
+      var offers = _this3.state.company.offers.slice();
+      for (var i = 0; i < offers.length; i++) {
+        var offer = offers[i];
+        offer.date = new Date(offer.date);
+      }
+      return offers;
+    }
+    return [];
   };
 
   this.handleAddContact = function () {
@@ -92384,14 +92401,22 @@ var _initialiseProps = function _initialiseProps() {
           })
         )
       ),
+      _react2.default.createElement(_materialUi.TextField, {
+        floatingLabelText: 'Monthly Salary',
+        fullWidth: true,
+        onChange: function onChange(event, value) {
+          _this3.setState({ newOffer: Object.assign(_this3.state.newOffer, { salary: value }) });
+        }
+      }),
+      _react2.default.createElement('br', null),
       _react2.default.createElement(
         'div',
         { className: 'centering' },
         _react2.default.createElement(_materialUi.TextField, {
-          floatingLabelText: 'Salary',
+          floatingLabelText: 'Monthly Stock/Stipend',
           fullWidth: true,
           onChange: function onChange(event, value) {
-            _this3.setState({ newOffer: Object.assign(_this3.state.newOffer, { salary: value }) });
+            _this3.setState({ newOffer: Object.assign(_this3.state.newOffer, { stock: value }) });
           }
         }),
         _react2.default.createElement('br', null),
@@ -92992,14 +93017,14 @@ var OfferTable = function (_React$Component) {
         _react2.default.createElement(_reactTable2.default, {
           data: this.props.data,
           columns: [{
-            Header: "Date",
-            accessor: "date"
-          }, {
             Header: "Type",
             accessor: "type"
           }, {
-            Header: "Salary",
+            Header: "Salary (month)",
             accessor: "salary"
+          }, {
+            Header: "Stock/Stipend (month)",
+            accessor: "stock"
           }, {
             Header: "Bonus",
             accessor: "bonus"
