@@ -100,6 +100,13 @@ class AddXp extends React.Component {
         </div>
         <div className="centering">
           <TextField
+            floatingLabelText="Location"
+            fullWidth={true}
+            onChange={(event, value) => {this.props.editStateObject('newXp','location',value)}}
+          /><br />
+        </div>
+        <div className="centering">
+          <TextField
             floatingLabelText="What was your experience like?"
             fullWidth={true}
             multiLine={true}

@@ -39,13 +39,14 @@ class CompanyCard extends React.Component {
 
   render() {
     return (
-      <Card 
+      <div 
         onTouchTap={
           () => {this.props.oc.openDrawer(
             <CompanyProfile oc={this.props.oc} c={this.props.c} userc={this.props.userc} companyid={this.props.companyid}/>
           )}
         }
         style={{margin:10, height: 230, width: 230, fontFamily: 'Raleway', backgroundColor: 'white', cursor: 'pointer', padding: 16}}
+        className="shadow-hover"
       >
         <div className="centering">
           <img src={this.props.squareLogo} width={150} height={150} />
@@ -56,7 +57,7 @@ class CompanyCard extends React.Component {
         {this.props.bookmarked &&
           <FontIcon className="material-icons" style={styles.bookmark}>bookmark</FontIcon>
         }
-      </Card>
+      </div>
     );
   }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
-  Paper, CircularProgress, Card, FlatButton, Chip, CardHeader, CardText
+  Paper, CircularProgress, Card, FlatButton, Chip, CardHeader, CardText, FontIcon,
+  Avatar
 } from 'material-ui';
 import { grey300, blue300, amber300, green300, orange300, teal300} from 'material-ui/styles/colors';
 import CompanyProfile from './CompanyProfile';
@@ -58,6 +59,14 @@ class ExperienceCard extends React.Component {
             >
               {this.props.xp.medium}
             </Chip>
+            {this.props.xp.location &&
+              <Chip
+                style={styles.chip}
+              >
+                <Avatar color='#444' style={{backgroundColor: grey300}} icon={<FontIcon className='material-icons'>location_on</FontIcon>} />
+                {this.props.xp.location}
+              </Chip>
+            }
           </div>
         </CardText>
         <CardText expandable={true}>

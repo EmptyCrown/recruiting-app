@@ -2,7 +2,7 @@ import React from 'react';
 import io from 'socket.io-client';
 import {
   Paper, CircularProgress, Dialog, FlatButton, Drawer, Badge,
-  TextField, FontIcon, Snackbar, DatePicker
+  TextField, FontIcon, Snackbar, DatePicker, RaisedButton
 } from 'material-ui';
 import { green700, white, amber600, grey200, red400, red500, red600, blue200, blue400, blue500, deepOrange500, amber400,
           grey500, grey700, darkBlack, green500, yellow500, green400, green600, greenA700, grey400, cyanA400, cyanA700,
@@ -47,12 +47,19 @@ class Home extends React.Component {
       seenInstructions: true
     };
     this.oc = {
-      openDialog: ((jsx, actions) => {this.setState({dialogOpen: true, dialogJSX: jsx, dialogActions: actions})}),
+      openDialog: ((jsx, actions, title) => {this.setState({dialogOpen: true, dialogJSX: jsx, dialogActions: actions, dialogTitle: title})}),
       closeDialog: (() => {this.setState({dialogOpen: false})}),
       openDrawer: ((jsx) => {this.setState({drawerOpen: true, drawerJSX: jsx})}),
       openSnackbar: ((message) => {this.setState({snackbarOpen: true, snackbarMessage: message})})
     };
   }
+
+  handleLogoClick = () => {
+    this.setState({
+      sectorFilter: '',
+      ownFilter: false
+    });
+  };
 
   signInGoogle = () => {
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -135,19 +142,20 @@ class Home extends React.Component {
     );
   };
 
-  handleLogoClick = () => {
-    var user = firebase.auth().currentUser;
-    firebase.database().ref('users/'+user.uid).update({seenInstructions: true});
+  showInstructions = () => {
     this.oc.openDialog(
       <div>
-        <PageHeader style={styles.header}>Welcome to OfferIQ!</PageHeader>
         <div>
-          This is a real-time community open only to Harvard students, where you can read and write about experiences or advice in the recruiting process. 
-          You'll also be able to view salary statistics, and keep track of the companies you're interested in. It's like a Q-Guide for companies.
+          <strong>How it works</strong> <br/>
+          This is a real-time community open only to Harvard students, where you can read and share experiences or advice in the recruiting process. 
+          You'll also be able to find salary statistics, points of contact, and keep track of the companies you're interested in. It's like a Q-Guide for companies.
           <br />
           <br />
           <strong>How is this different from Glassdoor?</strong> <br/>
-          We're hoping this will lead to quality information being shared that is more relevant to you as. Harvard student, and more personal advice. You'll be able to discuss questions you have with fellow students.
+          We're hoping this will lead to quality personal information being shared that is more relevant to you as a Harvard student. You'll be able to discuss questions you have with fellow students.
+          <br />
+          <br />
+          Log in with your .edu email address.
           <br />
           <br />
           Please submit bugs or new company requests to jessetanzhang@college.harvard.edu.
@@ -155,32 +163,27 @@ class Home extends React.Component {
       </div>,
       [
         <FlatButton
-          label="Got it!"
+          label="No thanks, just here to view"
           primary={true}
           onClick={this.oc.closeDialog}
+          style={{marginRight: 5}}
+        />,
+        <FlatButton
+          label="Log in"
+          backgroundColor={cyanA400}
+          hoverColor={cyanA700}
+          style={{color: white}}
+          onClick={() => {
+            this.signInGoogle();
+            this.oc.closeDialog();
+          }}
         />
-      ]
+      ],
+      "Welcome to OfferIQ!"
     )
   };
 
   componentDidMount() {
-    //FIRESTORE IMPLEMENTATION 
-
-    // var db = firebase.firestore();
-    // $.getJSON("/companiesExtra.json", function(json) {
-    //   var companies = json.companies;
-    //   for(var i = 0; i<companies.length; i++) {
-    //     var doc = companies[i];
-    //     db.collection("companies").add(doc);
-    //   }
-    // });
-    // console.log("mounted")
-    // db.collection("companies").onSnapshot((querySnapshot) => {
-    //   this.setState({
-    //     companies: querySnapshot.docs.map((doc) => {return Object.assign({companyid: doc.id}, doc.data())})
-    //   });
-    // });
-
     //FIREBASE IMPLEMENTATION
     firebase.database().ref('companies/').on('value', (snapshot) => {
       if(snapshot.val()) {
@@ -195,16 +198,7 @@ class Home extends React.Component {
         this.setState({
           loggedIn: true
         });
-        // db.collection("users").doc(user.uid).collection("userCompanies").onSnapshot((querySnapshot) => {
-        //   var userCompanies = {};
-        //   for(var i=0; i<querySnapshot.docs.length; i++) {
-        //     var doc = querySnapshot.docs[i];
-        //     userCompanies[doc.id] = doc.data();
-        //   }
-        //   this.setState({
-        //     userCompanies: userCompanies
-        //   });
-        // });
+
         firebase.database().ref('users/'+user.uid).on('value', (snapshot) => {
           if(snapshot.val()) {
             this.setState({
@@ -217,7 +211,7 @@ class Home extends React.Component {
         this.setState({
           userCompanies: {},
         });
-        this.oc.openSnackbar('Click the logo to log in with Harvard email');
+        this.showInstructions();
       }
     });
 
@@ -231,37 +225,16 @@ class Home extends React.Component {
 
 
   render() {
+    var user = firebase.auth().currentUser;
     var filteredList = this.filterCompanies();
     return (
       <div style={{fontFamily: 'Oxygen'}}>
         <div style={styles.bar} className="rowRL">
           <div className="rowC">
             <div style={{marginLeft: 16, marginRight: 16}}>
-              {this.state.loggedIn ?
-                (this.state.seenInstructions ?
-                  <div onTouchTap={this.handleLogoClick} style={{cursor: 'pointer'}}>
-                    <img src="/logo.png" height={35} style={{marginTop: 15}}/>
-                  </div>
-                :
-                  <div onTouchTap={this.handleLogoClick} style={{cursor: 'pointer'}}>
-                    <Badge
-                      badgeContent={<FontIcon className="material-icons" color={white}>notifications</FontIcon>}
-                      badgeStyle={{top: 12, right: 12, backgroundColor: pinkA400, fontSize: 8}}
-                    >
-                      <img src="/logo.png" height={35} style={{marginTop: -5}}/>
-                    </Badge>
-                  </div>
-                )
-              :
-                <div onTouchTap={this.signInGoogle} style={{cursor: 'pointer'}}>
-                  <Badge
-                    badgeContent={<FontIcon className="material-icons" color={white}>person</FontIcon>}
-                    badgeStyle={{top: 12, right: 12, backgroundColor: pinkA400, fontSize: 8}}
-                  >
-                    <img src="/logo.png" height={35} style={{marginTop: -5}}/>
-                  </Badge>
-                </div>
-              }
+              <div onTouchTap={this.handleLogoClick} style={{cursor: 'pointer'}}>
+                <img src="/logo.png" height={35} style={{marginTop: 15}}/>
+              </div>
             </div>
             {this.state.searchQuery ? 
               <i className="material-icons" style={{fontSize: 40, margin: 16, color: grey400, cursor: 'pointer'}} onTouchTap={() => {this.setState({searchQuery: ""})}}>close</i>
@@ -332,34 +305,65 @@ class Home extends React.Component {
                 onTouchTap={() => {this.setState({sectorFilter: 'consulting'})}}
               />
             }
-            {this.state.ownFilter ?
-              <FlatButton
-                label="Only Mine"
-                style={{height: 75, borderRadius: 0, color: white}}
-                icon={<FontIcon className="material-icons">bookmark</FontIcon>}
-                backgroundColor={amberA400}
-                hoverColor={amberA700}
-                onTouchTap={() => {this.setState({ownFilter: false})}}
-              />
+            {this.state.loggedIn ?
+              (this.state.ownFilter ?
+                <FlatButton
+                  label={user.displayName.split(' ')[0]}
+                  style={{height: 75, borderRadius: 0, color: white}}
+                  icon={<FontIcon className="material-icons">bookmark</FontIcon>}
+                  backgroundColor={amberA400}
+                  hoverColor={amberA700}
+                  onTouchTap={() => {this.setState({ownFilter: false})}}
+                />
+              :
+                <FlatButton
+                  label={user.displayName.split(' ')[0]}
+                  secondary={true}
+                  style={{height: 75, borderRadius: 0}}
+                  icon={<FontIcon className="material-icons">bookmark</FontIcon>}
+                  onTouchTap={() => {
+                    this.setState({ownFilter: true}, () => {
+                      if(this.filterCompanies().length == 0) {
+                        this.oc.openSnackbar('Bookmark companies to add to your personal list');
+                      }
+                    });
+                    
+                  }}
+                />
+              )
             :
               <FlatButton
-                label="Only Mine"
+                label="Log in"
                 secondary={true}
                 style={{height: 75, borderRadius: 0}}
-                icon={<FontIcon className="material-icons">bookmark</FontIcon>}
-                onTouchTap={() => {this.setState({ownFilter: true})}}
+                icon={<FontIcon className="material-icons">account_circle</FontIcon>}
+                onTouchTap={this.signInGoogle}
               />
             }
           </div>
         </div>
         <div style={{height: $(window).height() - 75, overflow: "auto"}}>
           {Object.keys(this.state.companies).length > 0 ?
-            <div className="centering" style={{width: $(window).width()}}>
-              <ReactList
-                itemRenderer={this.renderCard.bind(null, filteredList)}
-                length={filteredList.length}
-                type='variable'
-              />
+            <div>
+              <div className="centering" style={{width: $(window).width()}}>
+                <ReactList
+                  itemRenderer={this.renderCard.bind(null, filteredList)}
+                  length={filteredList.length}
+                  type='variable'
+                />
+              </div>
+              {filteredList.length <= 4 &&
+                <div className='centering'>
+                  <RaisedButton
+                    href="https://goo.gl/forms/GAoipZiVV4suEQLH2"
+                    target="_blank"
+                    label="Submit new companies to add"
+                    primary={true}
+                    style={{marginTop: 16}}
+                    icon={<FontIcon className="material-icons">add</FontIcon>}
+                  />
+                </div>
+              }
             </div>
           :
             <div style={{marginTop: 30}} className='centering'>
@@ -368,7 +372,7 @@ class Home extends React.Component {
           }
         </div>
         <Dialog
-          title="Information"
+          title={this.state.dialogTitle || "Information"}
           actions={this.state.dialogActions || []}
           modal={false}
           open={this.state.dialogOpen}
