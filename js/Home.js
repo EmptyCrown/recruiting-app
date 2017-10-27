@@ -2,7 +2,7 @@ import React from 'react';
 import io from 'socket.io-client';
 import {
   Paper, CircularProgress, Dialog, FlatButton, Drawer, Badge,
-  TextField, FontIcon, Snackbar, DatePicker, RaisedButton
+  TextField, FontIcon, Snackbar, DatePicker, RaisedButton, ListItem
 } from 'material-ui';
 import { green700, white, amber600, grey200, red400, red500, red600, blue200, blue400, blue500, deepOrange500, amber400,
           grey500, grey700, darkBlack, green500, yellow500, green400, green600, greenA700, grey400, cyanA400, cyanA700,
@@ -28,6 +28,18 @@ const styles = {
   header: {
     fontFamily: 'Ubuntu',
     marginTop: -22
+  },
+  button: {
+    background: 'linear-gradient(45deg, #24C6DC 30%, #514A9D 90%)',
+    borderRadius: 3,
+    fontWeight: 700,
+    border: 0,
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+    boxShadow: '0 3px 5px 2px rgba(38,198,218, .30)',
+    marginTop: 16,
+    cursor: 'pointer'
   },
 }
 
@@ -354,14 +366,9 @@ class Home extends React.Component {
               </div>
               {filteredList.length <= 4 &&
                 <div className='centering'>
-                  <RaisedButton
-                    href="https://goo.gl/forms/GAoipZiVV4suEQLH2"
-                    target="_blank"
-                    label="Submit new companies to add"
-                    primary={true}
-                    style={{marginTop: 16}}
-                    icon={<FontIcon className="material-icons">add</FontIcon>}
-                  />
+                  <ListItem style={styles.button} href="https://goo.gl/forms/GAoipZiVV4suEQLH2" target="_blank" leftIcon={<FontIcon className="material-icons" color={white}>add</FontIcon> }>
+                    <span > Submit new companies to add</span>
+                  </ListItem>
                 </div>
               }
             </div>
